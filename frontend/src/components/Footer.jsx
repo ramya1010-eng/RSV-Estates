@@ -47,8 +47,10 @@ const Footer = ({ onNavigate }) => {
                 maxWidth: '280px'
               }}
             >
-              Visit us at our office: No. 7, Kamakodi Nagar, Valasaravakkam, 
+              Visit us at our office <br></br>No. 7, Kamakodi Nagar, Valasaravakkam, 
               <br></br>Chennai - 600087
+
+             <br/><br/> Contact Us <br></br> +91 98765 43210, +91 99627 37779
 
               <br/><br/>
               E-mail : rsventerprises8344@gmail.com
