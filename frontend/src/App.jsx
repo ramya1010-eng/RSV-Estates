@@ -7,6 +7,7 @@ import PlotsPage from './pages/PlotsPage';
 import LocationsPage from './pages/LocationsPage';
 import ProjectsPage from './pages/ProjectsPage';
 import AmenitiesPage from './pages/AmenitiesPage';
+import TestimonialsPage from './pages/TestimonialsPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import BookVisitPage from './pages/BookVisitPage';
@@ -58,14 +59,20 @@ function App() {
         return <ProjectsPage />;
       case 'amenities':
         return <AmenitiesPage />;
+        case 'testimonials':
+        return <TestimonialsPage />;
       case 'about':
         return <AboutPage onNavigate={setCurrentPage} />;
       case 'contact':
         return <ContactPage />;
       case 'book-visit':
         return <BookVisitPage />;
-      case 'sold-leased':                // ← ADD THIS CASE
-        return <SoldLeasedPage />;
+      case 'sold-leased':
+  return (
+    <SoldLeasedPage
+      onNavigate={setCurrentPage}
+    />
+  );
       case 'admin':
         if (!isAdminAuthenticated) {
           return <AdminLogin

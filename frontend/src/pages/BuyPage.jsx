@@ -22,7 +22,7 @@ const BuyPage = ({ category = 'all' }) => {
     setAppliedFilters(prev => ({ ...prev, propertyType: category === 'all' ? '' : category }));
   }, [category]);
 
-  const [openContactIdx, setOpenContactIdx] = useState(null);
+  const [selectedProperty, setSelectedProperty] = useState(null);
 
   const [userProps, setUserProps] = useState([]);
 
@@ -223,23 +223,6 @@ const BuyPage = ({ category = 'all' }) => {
                   transition={{ duration: 0.8, ease: "easeOut" }}
                 />
                 
-                {/* Contact Overlay */}
-                {openContactIdx === idx && (
-                  <div style={{
-                    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-                    backgroundColor: 'rgba(21, 58, 33, 0.92)',
-                    display: 'flex', flexDirection: 'column',
-                    justifyContent: 'center', alignItems: 'center',
-                    color: '#fff', zIndex: 10, padding: '2rem', textAlign: 'center',
-                    backdropFilter: 'blur(3px)'
-                  }}>
-                    <h4 style={{ color: '#F58220', marginBottom: '15px', fontSize: '1.2rem', fontFamily: 'serif' }}>Owner Details</h4>
-                    <p style={{ margin: '5px 0', fontSize: '1.1rem', fontWeight: 'bold' }}>{prop.ownerName || 'RSV Authorized Owner'}</p>
-                    <p style={{ margin: '8px 0', fontSize: '1rem', background: 'rgba(0,0,0,0.2)', padding: '6px 12px', borderRadius: '4px' }}>📞 {prop.phone || '+91 99887 76655'}</p>
-                    <p style={{ margin: '5px 0', fontSize: '0.9rem', opacity: 0.9 }}>✉️ {prop.email || 'contact@rsvgroups.com'}</p>
-                  </div>
-                )}
-
                 <span className="tag" style={{ textTransform: 'capitalize', display: 'flex', alignItems: 'center', gap: '4px', zIndex: 12 }}>
                   {getIcon(prop.type)} {prop.type}
                 </span>
@@ -252,13 +235,18 @@ const BuyPage = ({ category = 'all' }) => {
                 </div>
                 <div className="price-info">
                   <span className="price">{prop.price}</span>
-                  <button 
-                    className="view-all-btn" 
-                    style={{ fontSize: '0.75rem', fontWeight: 700 }}
-                    onClick={() => setOpenContactIdx(openContactIdx === idx ? null : idx)}
-                  >
-                    {openContactIdx === idx ? 'CLOSE' : 'CONTACT OWNER'}
-                  </button>
+                  <button
+                        className="view-all-btn"
+                        style={{
+                          fontSize: '0.75rem',
+                          fontWeight: 700
+                        }}
+                        onClick={() =>
+                          setSelectedProperty(prop)
+                        }
+                      >
+                        MORE DETAILS
+                      </button>
                 </div>
               </div>
             </motion.div>
@@ -269,6 +257,134 @@ const BuyPage = ({ category = 'all' }) => {
           )}
         </div>
       </div>
+      {selectedProperty && (
+  <div
+    style={{
+      position: 'fixed',
+      inset: 0,
+      background: 'rgba(0,0,0,0.75)',
+      zIndex: 9999,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: '2rem'
+    }}
+  >
+    <div
+            style={{
+              width: '850px',
+              maxWidth: '95%',
+              maxHeight: '90vh',
+              background: '#f8f4e8',
+              borderRadius: '20px',
+              overflowY: 'auto',
+              overflowX: 'hidden',
+              boxShadow: '0 30px 60px rgba(0,0,0,0.4)'
+            }}
+          >
+      <img
+        src={selectedProperty.img}
+        alt={selectedProperty.title}
+        style={{
+          width: '100%',
+          height: '320px',
+          objectFit: 'cover'
+        }}
+      />
+
+      <div
+            style={{
+              padding: '2rem',
+              position: 'relative'
+            }}
+          >
+
+              
+
+        <h2
+          className="serif"
+          style={{
+            color: '#153a21',
+            marginBottom: '1rem'
+          }}
+        >
+          {selectedProperty.title}
+        </h2>
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns:
+              'repeat(2,1fr)',
+            gap: '1rem',
+            marginBottom: '2rem'
+          }}
+        >
+          <p><strong>Location:</strong> {selectedProperty.location}</p>
+          <p><strong>Area:</strong> {selectedProperty.sqft}</p>
+          <p><strong>Price:</strong> {selectedProperty.price}</p>
+          <p><strong>Type:</strong> {selectedProperty.type}</p>
+          <p><strong>Status:</strong> {selectedProperty.status}</p>
+          <p><strong>Registration:</strong> {selectedProperty.registration}</p>
+        </div>
+
+        <h3
+          style={{
+            color: '#153a21',
+            marginBottom: '1rem'
+          }}
+        >
+          Property Description
+        </h3>
+
+        <p
+          style={{
+            color: '#555',
+            lineHeight: 1.8
+          }}
+        >
+          {selectedProperty.description}
+        </p>
+
+        <hr
+          style={{
+            margin: '2rem 0'
+          }}
+        />
+
+        <h3
+          style={{
+            color: '#153a21'
+          }}
+        >
+          Owner Information
+        </h3>
+
+        <p><strong>Name:</strong> {selectedProperty.ownerName}</p>
+        <p><strong>Phone:</strong> {selectedProperty.phone}</p>
+        <p><strong>Email:</strong> {selectedProperty.email}</p>
+
+        <button
+          onClick={() =>
+            setSelectedProperty(null)
+          }
+          style={{
+            marginTop: '2rem',
+            background: '#153a21',
+            color: '#fff',
+            border: 'none',
+            padding: '14px 30px',
+            borderRadius: '12px',
+            cursor: 'pointer',
+            fontWeight: 700
+          }}
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 };

@@ -1,39 +1,7 @@
-// import React from 'react';
-// import Navbar from './Navbar';
-// import Footer from './Footer';
-
-// const Layout = ({ children, onNavigate, currentPage }) => {
-//   const isAdminPage = currentPage === 'admin';
-
-//   return (
-//     <div className="layout">
-//       {!isAdminPage && <Navbar onNavigate={onNavigate} currentPage={currentPage} />}
-//       <main>{children}</main>
-//       {!isAdminPage && <Footer onNavigate={onNavigate} />}
-      
-//       {/* Sticky Book Visit Button */}
-//       {!isAdminPage && currentPage !== 'book-visit' && (
-//         <button 
-//           className="sticky-visit-btn"
-//           onClick={() => onNavigate('book-visit')}
-//         >
-//           Book Site Visit
-//         </button>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default Layout;
-
-
-
-
-
-
 import React from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import { Phone } from 'lucide-react';
 
 const Layout = ({ children, onNavigate, currentPage }) => {
   const isAdminPage = currentPage === 'admin';
@@ -42,11 +10,52 @@ const Layout = ({ children, onNavigate, currentPage }) => {
     window.open('https://wa.me/919962737779', '_blank');
   };
 
+  const handleCall = () => {
+  window.location.href = 'tel:+919876543210';
+};
+
   return (
     <div className="layout">
       {!isAdminPage && <Navbar onNavigate={onNavigate} currentPage={currentPage} />}
       <main>{children}</main>
       {!isAdminPage && <Footer onNavigate={onNavigate} />}
+
+      {/* Call Floating Button */}
+{!isAdminPage && (
+  <button
+    onClick={handleCall}
+    style={{
+      position: 'fixed',
+      bottom: '6.8rem',
+      right: '2rem',
+      width: '58px',
+      height: '58px',
+      borderRadius: '50%',
+      background: '#0B4D1F',
+      border: 'none',
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      boxShadow: '0 4px 20px rgba(11,77,31,0.4)',
+      zIndex: 9999,
+      transition: 'transform 0.2s, box-shadow 0.2s',
+    }}
+    onMouseEnter={e => {
+      e.currentTarget.style.transform = 'scale(1.1)';
+      e.currentTarget.style.boxShadow =
+        '0 6px 25px rgba(11,77,31,0.6)';
+    }}
+    onMouseLeave={e => {
+      e.currentTarget.style.transform = 'scale(1)';
+      e.currentTarget.style.boxShadow =
+        '0 4px 20px rgba(11,77,31,0.4)';
+    }}
+    title="Call Us"
+  >
+    <Phone size={26} color="white" />
+  </button>
+)}
 
       {/* WhatsApp Floating Button */}
       {!isAdminPage && (

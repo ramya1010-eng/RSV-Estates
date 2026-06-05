@@ -31,7 +31,7 @@ const ProjectsPage = () => {
     <div className="projects-page-detailed">
       {/* Hero Section */}
       <section className="projects-hero" style={{ 
-        height: '60vh', 
+        height: '70vh', 
         position: 'relative', 
         display: 'flex', 
         alignItems: 'center',

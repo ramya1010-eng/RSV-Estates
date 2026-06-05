@@ -16,14 +16,22 @@ const AmenitiesPage = () => {
     <div className="amenities-page-detailed">
       {/* Hero Section */}
       <section className="amenities-hero" style={{ 
-        height: '60vh', 
+        height: '70vh', 
         position: 'relative', 
         display: 'flex', 
         alignItems: 'center',
         background: 'url(https://images.unsplash.com/photo-1613977257363-707ba9348227?q=80&w=2000&auto=format&fit=crop) center/cover no-repeat'
       }}>
         <div className="hero-overlay" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(rgba(15,26,17,0.7), rgba(15,26,17,0.9))' }} />
-        <div className="container" style={{ position: 'relative', zIndex: 10, textAlign: 'center' }}>
+        <div
+              className="container"
+              style={{
+                position: 'relative',
+                zIndex: 10,
+                textAlign: 'center',
+                paddingTop: '120px'
+              }}
+            >
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -132,4 +140,3 @@ const TrendingUp = ({ size }) => (
 );
 
 export default AmenitiesPage;
-

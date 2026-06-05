@@ -62,8 +62,8 @@ const FeaturedProjects = () => {
       price: '3,999',
       tag: 'Land',
       images: [
-        'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1629851605336-f3ccb0eceb9e?q=80&w=2074&auto=format&fit=crop'
+        'https://images.unsplash.com/photo-1757924432508-d4e92411caeb?q=80&w=1032&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1669003154058-e1876138ac3c?w=500&auto=format&fit=crop'
       ]
     },
     {

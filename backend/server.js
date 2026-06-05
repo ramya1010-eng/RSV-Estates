@@ -1,31 +1,3 @@
-// const express = require('express');
-// const cors = require('cors');
-// require('dotenv').config();
-// const db = require('./config/db');
-
-// const app = express();
-// app.use(cors());
-// app.use(express.json());
-
-// // Routes
-// const plotRoutes = require('./routes/plotRoutes');
-// const leadRoutes = require('./routes/leadRoutes');
-
-// app.use('/api/plots', plotRoutes);
-// app.use('/api/leads', leadRoutes);
-
-// app.get('/', (req, res) => {
-//   res.send('GreenField API is running...');
-// });
-
-// const PORT = process.env.PORT || 5000;
-// app.listen(PORT, () => {
-//   console.log(`Server running on port ${PORT}`);
-// });
-
-
-
-
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
@@ -35,13 +7,27 @@ const nodemailer = require('nodemailer');
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
 const plotRoutes = require('./routes/plotRoutes');
 const leadRoutes = require('./routes/leadRoutes');
+const testimonialRoutes = require("./routes/testimonials");
+const siteInquiryRoutes = require("./routes/siteInquiryRoutes");
+const path = require("path");
+
+app.use(
+  "/uploads",
+  express.static(
+    path.join(__dirname, "uploads")
+  )
+);
 
 app.use('/api/plots', plotRoutes);
 app.use('/api/leads', leadRoutes);
+app.use("/api/testimonials", testimonialRoutes);
+app.use("/api/site-inquiries", siteInquiryRoutes);
+app.use(express.json());
 
 // ── Email / Inquiry Route ─────────────────────────────────────────────────────
 app.post('/api/contact', async (req, res) => {

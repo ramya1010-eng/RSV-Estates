@@ -278,11 +278,41 @@ const ContactPage = () => {
     display: 'block',
   };
 
+  const locations = {
+  padappai: {
+    name: "Padappai",
+    lat: 12.8808,
+    lng: 80.0224,
+    mapsUrl: "https://maps.google.com/?q=Padappai"
+  },
+  vadapalani: {
+    name: "Vadapalani",
+    lat: 13.0500,
+    lng: 80.2121,
+    mapsUrl: "https://maps.google.com/?q=Vadapalani"
+  },
+  chengalpattu: {
+    name: "Chengalpattu",
+    lat: 12.6819,
+    lng: 79.9835,
+    mapsUrl: "https://maps.google.com/?q=Chengalpattu"
+  },
+  kanchipuram: {
+    name: "Kanchipuram",
+    lat: 12.8342,
+    lng: 79.7036,
+    mapsUrl: "https://maps.google.com/?q=Kanchipuram"
+  }
+};
+
+const [selectedLocation, setSelectedLocation] =
+  useState(locations.padappai);
+
   return (
     <div className="contact-page-detailed">
 
       {/* ── Hero ── */}
-      <section className="contact-hero" style={{ height: '50vh', position: 'relative', display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
+      <section className="contact-hero" style={{ height: '75vh', position: 'relative', display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
         <motion.div
           initial={{ scale: 1.15 }} animate={{ scale: 1 }} transition={{ duration: 1.5, ease: 'easeOut' }}
           style={{ position: 'absolute', inset: 0, background: 'url(https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000&auto=format&fit=crop) center/cover no-repeat', zIndex: 0 }}
@@ -483,29 +513,180 @@ const ContactPage = () => {
         </div>
       </section>
 
-      {/* ── Map Section ── */}
-      <section style={{ height: '400px', position: 'relative', overflow: 'hidden' }}>
-        <a href="https://www.google.com/maps/search/Chennai" target="_blank" rel="noopener noreferrer" style={{ display: 'block', width: '100%', height: '100%', cursor: 'pointer' }}>
-          <div style={{ position: 'absolute', inset: 0, background: `url(${mapImg}) center/cover no-repeat`, transition: 'filter 0.3s ease' }} />
-          <div style={{ position: 'absolute', inset: 0, padding: '1rem' }}>
-            <div className="container" style={{ height: '100%', position: 'relative' }}>
-              <div style={{ textAlign: 'center', marginTop: '2rem', background: 'var(--primary-dark)', padding: '1rem', borderRadius: '12px', maxWidth: '350px', margin: '2rem auto 0', boxShadow: '0 10px 30px rgba(0,0,0,0.4)' }}>
-                <h2 className="serif" style={{ color: 'white', fontSize: 'var(--font-md)', marginBottom: '0' }}>Our Chennai <span className="highlight">Hubs</span></h2>
-                <p style={{ color: 'var(--accent-gold)', fontSize: '0.7rem', marginTop: '0.25rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Click to view on Google Maps</p>
-              </div>
-            </div>
-          </div>
-        </a>
-      </section>
+      {/* ── Interactive Location Map ── */}
 
-      {/* ── Quick Actions ── */}
-      <section style={{ padding: '2rem 0', background: 'var(--primary-dark)', color: 'white' }}>
-        <div className="container" style={{ display: 'flex', justifyContent: 'center', gap: '2rem' }}>
-          <button className="book-btn" style={{ gap: '8px', padding: '0.8rem 1.5rem', cursor: 'pointer' }}>
-            <Phone size={16} /> Call Now
-          </button>
-        </div>
-      </section>
+<section
+  style={{
+    padding: "5rem 0",
+    background:
+      "linear-gradient(180deg,#f8faf8 0%,#ffffff 100%)"
+  }}
+>
+  <div className="container">
+
+    <div
+      style={{
+        textAlign: "center",
+        marginBottom: "3rem"
+      }}
+    >
+      <span className="badge-premium">
+        RSV Locations
+      </span>
+
+      <h2
+        className="serif"
+        style={{
+          fontSize: "var(--font-xl)",
+          marginTop: "1rem"
+        }}
+      >
+        Explore Our
+        <span className="highlight">
+          {" "}Property Hubs
+        </span>
+      </h2>
+
+      <p
+        style={{
+          color: "var(--text-light)",
+          maxWidth: "700px",
+          margin: "0 auto"
+        }}
+      >
+        Visit our major locations across Chennai and
+        Kanchipuram district. Click a location to
+        explore it on the map.
+      </p>
+    </div>
+
+    {/* Location Cards */}
+
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns:
+          "repeat(auto-fit,minmax(220px,1fr))",
+        gap: "1.5rem",
+        marginBottom: "2rem"
+      }}
+    >
+      {Object.entries(locations).map(([key, loc]) => (
+
+        <motion.div
+          whileHover={{
+            y: -5
+          }}
+          key={key}
+          onClick={() =>
+            setSelectedLocation(loc)
+          }
+          style={{
+            cursor: "pointer",
+            background:
+              selectedLocation.name === loc.name
+                ? "var(--primary-dark)"
+                : "white",
+            color:
+              selectedLocation.name === loc.name
+                ? "white"
+                : "inherit",
+            padding: "1.5rem",
+            borderRadius: "20px",
+            border:
+              selectedLocation.name === loc.name
+                ? "2px solid var(--accent-gold)"
+                : "1px solid #eee",
+            boxShadow:
+              "0 15px 40px rgba(0,0,0,0.06)",
+            transition: "all .3s"
+          }}
+        >
+          <MapPin
+            size={28}
+            color={
+              selectedLocation.name === loc.name
+                ? "#d4af37"
+                : "#0d3b25"
+            }
+          />
+
+          <h3
+            className="serif"
+            style={{
+              marginTop: "1rem"
+            }}
+          >
+            {loc.name}
+          </h3>
+
+          <p
+            style={{
+              fontSize: ".85rem",
+              opacity: .8
+            }}
+          >
+            Click to view location
+          </p>
+        </motion.div>
+
+      ))}
+    </div>
+
+    {/* Map */}
+
+    <div
+      style={{
+        overflow: "hidden",
+        borderRadius: "25px",
+        boxShadow:
+          "0 25px 60px rgba(0,0,0,.12)",
+        border: "1px solid #eee"
+      }}
+    >
+      <iframe
+        title="RSV Location Map"
+        width="100%"
+        height="550"
+        style={{
+          border: "none"
+        }}
+        loading="lazy"
+        allowFullScreen
+        src={`https://maps.google.com/maps?q=${selectedLocation.lat},${selectedLocation.lng}&z=15&output=embed`}
+      />
+    </div>
+
+    <div
+      style={{
+        textAlign: "center",
+        marginTop: "2rem"
+      }}
+    >
+      <a
+        href={selectedLocation.mapsUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "10px",
+          background:
+            "var(--primary-dark)",
+          color: "white",
+          textDecoration: "none",
+          padding: "14px 24px",
+          borderRadius: "50px",
+          fontWeight: "700"
+        }}
+      >
+        <MapPin size={18} />
+        Open {selectedLocation.name} in Google Maps
+      </a>
+    </div>
+
+  </div>
+</section>
 
     </div>
   );

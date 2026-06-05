@@ -66,7 +66,7 @@ const AboutPage = ({ onNavigate }) => {
                style={{ width: '100%', borderRadius: '40px 0 40px 0', border: '1px solid #eee' }}
              />
              <div style={{ position: 'absolute', bottom: '-30px', right: '-30px', background: 'var(--accent-gold)', padding: '1.5rem', borderRadius: '20px', color: 'var(--primary-dark)', boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }}>
-                <h3 className="serif" style={{ fontSize: 'var(--font-lg)' }}>10+</h3>
+                <h3 className="serif" style={{ fontSize: 'var(--font-lg)' }}>15+</h3>
                 <p style={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase' }}>Years of Excellence</p>
              </div>
           </div>
@@ -74,12 +74,12 @@ const AboutPage = ({ onNavigate }) => {
       </section>
 
       {/* Stats Section - No top/bottom spaces */}
-      <section style={{ padding: '3rem 0', background: 'var(--primary-dark)', color: 'white' }}>
+      <section style={{ padding: '3rem 0', background:'var(--accent-gold)', color: 'rgb(25, 54, 7)' }}>
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '2rem', textAlign: 'center' }}>
             {stats.map((stat, i) => (
               <div key={i}>
-                <h3 className="serif" style={{ fontSize: 'var(--font-xl)', color: 'var(--accent-gold)', marginBottom: '0.5rem' }}>{stat.num}</h3>
+                <h3 className="serif" style={{ fontSize: 'var(--font-xl)', color: 'rgb(25, 54, 7)', marginBottom: '0.5rem' }}>{stat.num}</h3>
                 <p style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', opacity: 0.6, fontSize: '0.75rem' }}>{stat.label}</p>
               </div>
             ))}

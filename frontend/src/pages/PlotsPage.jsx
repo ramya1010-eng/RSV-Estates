@@ -51,11 +51,14 @@ const PlotsPage = () => {
   return (
     <div className="plots-page-detailed">
       {/* Hero Section */}
-      <section className="plots-hero" style={{ 
-        height: '70vh', 
-        position: 'relative', 
-        display: 'flex', 
-        alignItems: 'center',
+      <section
+  className="plots-hero"
+  style={{
+    height: '70vh',
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+    paddingTop: '120px',
         background: 'url(https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=2000&auto=format&fit=crop) center/cover no-repeat'
       }}>
         <div className="hero-overlay" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(15,26,17,0.9), transparent)' }} />
@@ -83,33 +86,125 @@ const PlotsPage = () => {
       </section>
 
       {/* Smart Filters Sticky Bar */}
-      <div className="sticky-filter-wrapper" style={{ position: 'sticky', top: '80px', zIndex: 100, background: 'white', borderBottom: '1px solid #eee', boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }}>
-        <div className="container" style={{ padding: '1.5rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div className="filter-group" style={{ display: 'flex', gap: '2rem' }}>
-            <div className="filter-select">
-              <label style={{ fontSize: '0.7rem', color: 'var(--accent-gold)', fontWeight: 700, textTransform: 'uppercase' }}>Location</label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary-dark)', fontWeight: 600 }}>
-                Chennai West <ChevronDown size={16} />
-              </div>
-            </div>
-            <div className="filter-select">
-              <label style={{ fontSize: '0.7rem', color: 'var(--accent-gold)', fontWeight: 700, textTransform: 'uppercase' }}>Budget</label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary-dark)', fontWeight: 600 }}>
-                25L - 1.5Cr <ChevronDown size={16} />
-              </div>
-            </div>
-            <div className="filter-select">
-              <label style={{ fontSize: '0.7rem', color: 'var(--accent-gold)', fontWeight: 700, textTransform: 'uppercase' }}>Plot Size</label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary-dark)', fontWeight: 600 }}>
-                1200+ Sq.ft <ChevronDown size={16} />
-              </div>
-            </div>
-          </div>
-          <button className="btn-primary" style={{ padding: '0.8rem 2rem', background: 'var(--primary-dark)', color: 'white', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Filter size={18} /> Apply Filters
-          </button>
-        </div>
+      <div
+  style={{
+    background: "#fff",
+    padding: "2rem 0",
+    boxShadow: "0 8px 30px rgba(0,0,0,.05)",
+    position: "relative",
+    zIndex: 100,
+  }}
+>
+  <div
+    className="container"
+    style={{
+      maxWidth: "1300px",
+      margin: "0 auto",
+      padding: "0 2rem",
+    }}
+  >
+
+    {/* Search */}
+    <div
+      style={{
+        marginBottom: "1rem",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "12px",
+          background: "#f8f8f8",
+          border: "1px solid #ececec",
+          borderRadius: "14px",
+          padding: "0 1.2rem",
+          height: "60px",
+        }}
+      >
+        <Search size={20} color="#999" />
+
+        <input
+          type="text"
+          placeholder="Search by location, project name..."
+          style={{
+            border: "none",
+            outline: "none",
+            background: "transparent",
+            width: "100%",
+            fontSize: "1rem",
+          }}
+        />
       </div>
+    </div>
+
+    {/* Filters */}
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr 1fr",
+        gap: "1rem",
+        marginBottom: "1.5rem",
+      }}
+    >
+      <select className="luxury-filter">
+        <option>All Locations</option>
+      </select>
+
+      <select className="luxury-filter">
+        <option>Any Budget</option>
+      </select>
+
+      <select className="luxury-filter">
+        <option>Any Plot Size</option>
+      </select>
+    </div>
+
+    {/* Bottom Row */}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: "1rem",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          gap: ".8rem",
+        }}
+      >
+        <button className="filter-pill active">
+          All
+        </button>
+
+        <button className="filter-pill">
+          DTCP
+        </button>
+
+        <button className="filter-pill">
+          CMDA
+        </button>
+
+        <button className="filter-pill">
+          Premium
+        </button>
+      </div>
+
+      <div
+        style={{
+          fontWeight: 700,
+          color: "var(--accent-gold)",
+          fontSize: "1rem",
+        }}
+      >
+        {plots.length} Properties Found
+      </div>
+    </div>
+  </div>
+</div>
 
       {/* Value Strip */}
       <section className="value-strip" style={{ background: 'var(--primary-dark)', padding: '4rem 0' }}>

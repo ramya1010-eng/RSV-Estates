@@ -7,6 +7,17 @@ const SellPage = ({ category = "" }) => {
     propertyCategory: "",
     location: "",
     propertyType: "",
+
+    apartmentType: "",
+
+    landArea: "",
+    landAreaUnit: "sqft",
+
+    builtupArea: "",
+    builtupUnit: "sqft",
+
+    plotSize: "",
+    plotUnit: "sqft",
     price: "",
     additionalInfo: "",
     ownerName: "",
@@ -349,6 +360,208 @@ const SellPage = ({ category = "" }) => {
 
           </div>
 
+          <div className="form-group">
+  <label>Property Type *</label>
+
+  <div className="category-grid">
+
+    <div
+      className={`category-card ${
+        formData.propertyType === "apartment"
+          ? "active"
+          : ""
+      }`}
+      onClick={() =>
+        setFormData({
+          ...formData,
+          propertyType: "apartment"
+        })
+      }
+    >
+      <div className="category-icon">
+        🏢
+      </div>
+
+      <h4>Apartment</h4>
+    </div>
+
+    <div
+      className={`category-card ${
+        formData.propertyType === "villa"
+          ? "active"
+          : ""
+      }`}
+      onClick={() =>
+        setFormData({
+          ...formData,
+          propertyType: "villa"
+        })
+      }
+    >
+      <div className="category-icon">
+        🏠
+      </div>
+
+      <h4>Villa</h4>
+    </div>
+
+    <div
+      className={`category-card ${
+        formData.propertyType === "plot"
+          ? "active"
+          : ""
+      }`}
+      onClick={() =>
+        setFormData({
+          ...formData,
+          propertyType: "plot"
+        })
+      }
+    >
+      <div className="category-icon">
+        🌳
+      </div>
+
+      <h4>Plot / Land</h4>
+    </div>
+
+  </div>
+</div>
+
+{formData.propertyType === "apartment" && (
+
+  <div className="form-group">
+
+    <label>Apartment Type *</label>
+
+    <select
+      name="apartmentType"
+      value={formData.apartmentType}
+      onChange={handleInputChange}
+    >
+      <option value="">
+        Select Apartment Type
+      </option>
+
+      <option value="corporate">
+        Corporate
+      </option>
+
+      <option value="scalable">
+        Scalable
+      </option>
+
+      <option value="uds">
+        UDS
+      </option>
+
+    </select>
+
+  </div>
+
+)}
+
+{formData.propertyType === "villa" && (
+  <div className="form-grid">
+
+    {/* Land Area */}
+    <div className="form-group">
+      <label>Land Area *</label>
+      <input
+        type="text"
+        name="landArea"
+        value={formData.landArea || ""}
+        onChange={handleInputChange}
+        placeholder="Enter Land Area"
+      />
+    </div>
+
+    {/* Land Area Unit */}
+    <div className="form-group">
+      <label>Unit</label>
+      <select
+        name="landAreaUnit"
+        value={formData.landAreaUnit || "sqft"}
+        onChange={handleInputChange}
+      >
+        <option value="sqft">Sq.ft</option>
+        <option value="acre">Acre</option>
+      </select>
+    </div>
+
+    {/* Built-up Area */}
+    <div className="form-group">
+      <label>Built-up Area *</label>
+      <input
+        type="text"
+        name="builtupArea"
+        value={formData.builtupArea || ""}
+        onChange={handleInputChange}
+        placeholder="Enter Built-up Area"
+      />
+    </div>
+
+    {/* Built-up Area Unit */}
+    <div className="form-group">
+      <label>Unit</label>
+      <select
+        name="builtupUnit"
+        value={formData.builtupUnit || "sqft"}
+        onChange={handleInputChange}
+      >
+        <option value="sqft">Sq.ft</option>
+        <option value="acre">Acre</option>
+      </select>
+    </div>
+
+  </div>
+)}
+
+{formData.propertyType === "plot" && (
+
+  <div className="form-grid">
+
+    <div className="form-group">
+
+      <label>Land Size *</label>
+
+      <input
+          type="text"
+          value={formData.landSize}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              landSize: e.target.value,
+            })
+          }
+        />
+    </div>
+
+    <div className="form-group">
+
+      <label>Unit</label>
+
+      <select
+        name="plotUnit"
+        value={formData.plotUnit}
+        onChange={handleInputChange}
+      >
+        <option value="sqft">
+          Sq.ft
+        </option>
+
+        <option value="acre">
+          Acre
+        </option>
+
+      </select>
+
+    </div>
+
+  </div>
+
+)}
+
           <div className="form-grid">
 
             <div className="form-group">
@@ -377,34 +590,6 @@ const SellPage = ({ category = "" }) => {
                   Kanchipuram
                 </option>
 
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>
-                Property Type *
-              </label>
-
-              <select
-                name="propertyType"
-                value={formData.propertyType}
-                onChange={handleInputChange}
-              >
-                <option value="">
-                  Select Property Type
-                </option>
-
-                <option value="apartment">
-                  Apartment
-                </option>
-
-                <option value="villa">
-                  Villa
-                </option>
-
-                <option value="plot">
-                  Plot / Land
-                </option>
               </select>
             </div>
 
