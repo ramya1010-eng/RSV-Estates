@@ -1,3 +1,10 @@
+<<<<<<< HEAD
 node_modules
 dist
 .env
+=======
+node_modules/
+.env
+dist/
+uploads/
+>>>>>>> 2f628fbcf27f807ff98143a09f691029120d2fe9
