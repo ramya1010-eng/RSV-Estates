@@ -62,10 +62,10 @@ const Amenities = () => {
           <h2 className="section-title serif">Built for <br />Generations</h2>
           <div className="stats-grid">
             {[
-              { val: '10+', label: 'Years Of Mastery' },
-              { val: '25+', label: 'Premium Estates' },
-              { val: '1k+', label: 'Loyal Families' },
-              { val: '100+', label: 'Acres Restored' }
+              { val: '15+', label: 'Years Of  Experience' },
+              { val: '50+', label: 'Projects Completed' },
+              { val: '1500+', label: 'Happy Customers' },
+              { val: '10+', label: 'Acres Developed' }
             ].map((s, i) => (
               <motion.div 
                 key={i} 

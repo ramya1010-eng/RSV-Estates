@@ -1,3 +1,8 @@
+
+
+
+
+
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
@@ -15,7 +20,8 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
 import BuyPage from './pages/BuyPage';
 import SellPage from './pages/SellPage';
-import SoldLeasedPage from './pages/SoldLeasedPage'; // ← ADD THIS
+import SoldLeasedPage from './pages/SoldLeasedPage';
+import CustomerReviewsPage from './components/CustomerReviewsPage';
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -37,9 +43,21 @@ function App() {
     return () => window.removeEventListener('hashchange', handleHash);
   }, [currentPage]);
 
+  // ✅ FeaturedProjects onNavigate('land' | 'residential' | 'commercial' | 'all')
+  // Home page-ல FeaturedProjects-க்கு இந்த function pass பண்ணு
+  const handleBuyNavigate = (category) => {
+    if (category === 'all') {
+      setCurrentPage('buy');
+    } else {
+      setCurrentPage(`buy-${category}`); // 'buy-land', 'buy-residential', 'buy-commercial'
+    }
+  };
+
   const renderPage = () => {
+    // buy-land / buy-residential / buy-commercial / buy
     if (currentPage.startsWith('buy')) {
-      const category = currentPage.split('-')[1] || 'all';
+      const parts = currentPage.split('-');
+      const category = parts[1] || 'all'; // 'land', 'residential', 'commercial', 'all'
       return <BuyPage category={category} />;
     }
 
@@ -50,7 +68,8 @@ function App() {
 
     switch (currentPage) {
       case 'home':
-        return <Home onNavigate={setCurrentPage} />;
+        // ✅ Home-க்கு handleBuyNavigate pass பண்றோம்
+        return <Home onNavigate={setCurrentPage} onBuyNavigate={handleBuyNavigate} />;
       case 'plots':
         return <PlotsPage />;
       case 'locations':
@@ -59,8 +78,10 @@ function App() {
         return <ProjectsPage />;
       case 'amenities':
         return <AmenitiesPage />;
-        case 'testimonials':
+      case 'testimonials':
         return <TestimonialsPage />;
+      case 'reviews':
+        return <CustomerReviewsPage onNavigate={setCurrentPage} />;
       case 'about':
         return <AboutPage onNavigate={setCurrentPage} />;
       case 'contact':
@@ -68,24 +89,26 @@ function App() {
       case 'book-visit':
         return <BookVisitPage />;
       case 'sold-leased':
-  return (
-    <SoldLeasedPage
-      onNavigate={setCurrentPage}
-    />
-  );
+        return <SoldLeasedPage onNavigate={setCurrentPage} />;
       case 'admin':
         if (!isAdminAuthenticated) {
-          return <AdminLogin
-            onLogin={() => setIsAdminAuthenticated(true)}
-            onBack={() => setCurrentPage('home')}
-          />;
+          return (
+            <AdminLogin
+              onLogin={() => setIsAdminAuthenticated(true)}
+              onBack={() => setCurrentPage('home')}
+            />
+          );
         }
-        return <AdminDashboard onLogout={() => {
-          setIsAdminAuthenticated(false);
-          setCurrentPage('home');
-        }} />;
+        return (
+          <AdminDashboard
+            onLogout={() => {
+              setIsAdminAuthenticated(false);
+              setCurrentPage('home');
+            }}
+          />
+        );
       default:
-        return <Home onNavigate={setCurrentPage} />;
+        return <Home onNavigate={setCurrentPage} onBuyNavigate={handleBuyNavigate} />;
     }
   };
 

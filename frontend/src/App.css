@@ -1731,3 +1731,126 @@ img {
 .property-modal::-webkit-scrollbar-thumb:hover {
   background: #b89333;
 }
+
+/* ============================================================
+   HERO — ADD / REPLACE these rules in your App.css
+   ============================================================ */
+
+/* 1. Remove the broken space in padding-top */
+.hero-content {
+  position: relative;
+  width: 100%;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 4rem;
+  align-items: center;
+  padding-top: 120px; /* was "120 px" with a space — causes parse failure */
+}
+
+/* 2. Enquiry card — top offset only on desktop */
+.enquiry-card {
+  background: var(--glass-white);
+  backdrop-filter: blur(30px);
+  padding: 3rem;
+  position: relative;
+  top: 40px;
+  max-width: 400px;
+  margin-left: auto;
+  border: 1px solid var(--glass-border);
+  border-radius: 10%;
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.25);
+}
+
+/* 3. Tablet (≤ 900px) */
+@media (max-width: 900px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding-top: 8rem;
+    gap: 2rem;
+  }
+
+  .hero-text-side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Remove the top offset so card sits naturally below text */
+  .enquiry-card {
+    position: static;
+    top: unset;
+    margin: 2rem auto 0;
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .hero-parameters {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+}
+
+/* 4. Mobile (≤ 600px) */
+@media (max-width: 600px) {
+  .hero-text-side h1 {
+    font-size: 3rem;
+    letter-spacing: -1px;
+  }
+
+  .hero-desc {
+    font-size: 1rem;
+    margin-bottom: 0;
+  }
+
+  .hero-parameters {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+
+  /* badge margin: much less on mobile */
+  .hero-text-side .badge-premium {
+    margin-top: 2rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .enquiry-card {
+    padding: 2rem;
+    border-radius: 20px;
+  }
+}
+
+/* 5. Small mobile (≤ 480px) */
+@media (max-width: 480px) {
+  .hero-text-side h1 {
+    font-size: 2.5rem;
+  }
+
+  .enquiry-card {
+    padding: 1.5rem;
+    border-radius: 16px;
+  }
+
+  .enquiry-card h3 {
+    font-size: 1.8rem;
+  }
+}
+
+/* 6. Tiny (≤ 380px) */
+@media (max-width: 380px) {
+  .hero-text-side h1 {
+    font-size: 2.2rem;
+  }
+
+  .enquiry-card {
+    padding: 1.25rem;
+  }
+}
+
+
+
+
