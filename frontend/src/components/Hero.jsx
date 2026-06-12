@@ -250,7 +250,7 @@ const Hero = ({ onNavigate }) => {
                 </div>
                 <h3 className="serif" style={{ fontSize: '2.5rem', marginBottom: '1rem', color: 'white', letterSpacing: '1px' }}>Thank You.</h3>
                 <p style={{ marginBottom: '2.5rem', color: 'rgba(255,255,255,0.7)', fontSize: '1.1rem', lineHeight: 1.6, fontWeight: 300 }}>
-                  Thank you for visiting the <span style={{ color: '#F58220', fontWeight: 600 }}>RSV Groups</span> website. We appreciate your interest.
+                  Thank you for visiting the <span style={{ color: '#F58220', fontWeight: 600 }}>RSV Estates</span> website. We appreciate your interest.
                 </p>
                 <button
                   onClick={() => setShowPopup(false)}

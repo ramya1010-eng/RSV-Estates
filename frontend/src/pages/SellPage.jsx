@@ -1,58 +1,82 @@
 
 
 
+
+
+
+
+
+
+// SellPage.jsx — Supabase DB integration
+// Table: sell
+//
+// Setup:
+// 1. npm install @supabase/supabase-js
+// 2. Run sell_table.sql in Supabase → SQL Editor
+// 3. Replace SUPABASE_URL and SUPABASE_ANON_KEY below
+
 import React, { useState, useMemo } from "react";
 import "./SellPage.css";
+import { createClient } from "@supabase/supabase-js";
+
+// ─── Supabase Config ──────────────────────────────────────────────────────────
+// Supabase Dashboard → Project Settings → API → copy these two values
+const SUPABASE_URL      = "https://gdyapjrcmbhojclmrhyf.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_BdsZT5s1ds2ntHEFE3POiw_9E0i79Ws";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// ─────────────────────────────────────────────────────────────────────────────
 
 const SellPage = ({ category = "" }) => {
   const [formData, setFormData] = useState({
-    propertyName: "",
+    propertyName:     "",
     propertyCategory: "",
-    location: "",
-    propertyType: "",
-    apartmentType: "",
-    landArea: "",
-    landAreaUnit: "sqft",
-    builtupArea: "",
-    builtupUnit: "sqft",
-    plotSize: "",
-    plotUnit: "sqft",
-    price: "",
-    additionalInfo: "",
-    ownerName: "RSV Estate Pvt Ltd",
-    propertyAddress: "",
-    phone: "+91 9962917779, +91 99627 37779",
-    email: "info@rsvgroups.com",
-    memberType: "new",
-    image: null,
+    location:         "",
+    propertyType:     "",
+    apartmentType:    "",
+    landArea:         "",
+    landAreaUnit:     "sqft",
+    builtupArea:      "",
+    builtupUnit:      "sqft",
+    plotSize:         "",
+    plotUnit:         "sqft",
+    price:            "",
+    additionalInfo:   "",
+    ownerName:        "",
+    propertyAddress:  "",
+    phone:            "",
+    email:            "",
+    memberType:       "new",
+    images:           [],
   });
-
-  const [showSuccess, setShowSuccess] = useState(false);
 
   const [amenities, setAmenities] = useState({
-    balconies: false,
-    lift: false,
-    parking: false,
-    security: false,
-    clubHouse: false,
+    balconies:    false,
+    lift:         false,
+    parking:      false,
+    security:     false,
+    clubHouse:    false,
     swimmingPool: false,
-    garden: false,
-    gym: false,
-    playGround: false,
+    garden:       false,
+    gym:          false,
+    playGround:   false,
   });
 
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreviews, setImagePreviews] = useState([]);
+  const [showSuccess,   setShowSuccess]   = useState(false);
+  const [loading,       setLoading]       = useState(false);
+  const [error,         setError]         = useState("");
 
   const amenitiesList = [
-    { key: "balconies", label: "Balconies", icon: "🏢" },
-    { key: "lift", label: "Lift", icon: "🛗" },
-    { key: "parking", label: "Parking", icon: "🚗" },
-    { key: "security", label: "Security", icon: "🛡️" },
-    { key: "clubHouse", label: "Club House", icon: "🏘️" },
-    { key: "swimmingPool", label: "Swimming Pool", icon: "🏊" },
-    { key: "garden", label: "Garden", icon: "🌳" },
-    { key: "gym", label: "Gym", icon: "🏋️" },
-    { key: "playGround", label: "Play Ground", icon: "🎡" },
+    { key: "balconies",    label: "Balconies",    icon: "🏢" },
+    { key: "lift",         label: "Lift",         icon: "🛗" },
+    { key: "parking",      label: "Parking",      icon: "🚗" },
+    { key: "security",     label: "Security",     icon: "🛡️" },
+    { key: "clubHouse",    label: "Club House",   icon: "🏘️" },
+    { key: "swimmingPool", label: "Swimming Pool",icon: "🏊" },
+    { key: "garden",       label: "Garden",       icon: "🌳" },
+    { key: "gym",          label: "Gym",          icon: "🏋️" },
+    { key: "playGround",   label: "Play Ground",  icon: "🎡" },
   ];
 
   const handleInputChange = (e) => {
@@ -66,55 +90,86 @@ const SellPage = ({ category = "" }) => {
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setFormData((prev) => ({ ...prev, image: file }));
-    setImagePreview(URL.createObjectURL(file));
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    const combined    = [...formData.images, ...files].slice(0, 10);
+    const newPreviews = files.map((f) => URL.createObjectURL(f));
+    setFormData((prev) => ({ ...prev, images: combined }));
+    setImagePreviews((prev) => [...prev, ...newPreviews].slice(0, 10));
   };
 
-  const selectedAmenities = useMemo(() => {
-    return Object.keys(amenities).filter((key) => amenities[key]);
-  }, [amenities]);
+  const removeImage = (index) => {
+    setFormData((prev) => ({ ...prev, images: prev.images.filter((_, i) => i !== index) }));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  };
 
-  const handleSubmit = (e) => {
+  const selectedAmenities = useMemo(
+    () => Object.keys(amenities).filter((key) => amenities[key]),
+    [amenities]
+  );
+
+  const toBase64 = (file) =>
+    new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(file);
+    });
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
 
-    let resolvedType = "land";
-    if (category) {
-      resolvedType = category;
-    } else if (formData.propertyType === "plot") {
-      resolvedType = "land";
-    } else if (formData.propertyCategory) {
-      resolvedType = formData.propertyCategory;
-    }
+    try {
+      let base64Images = [];
+      if (formData.images.length > 0) {
+        base64Images = await Promise.all(formData.images.map(toBase64));
+      }
 
-    const processSubmission = (base64Img) => {
-      const newProperty = {
-        title: formData.propertyName || "Elite Listing",
-        location: formData.location || "Chennai",
-        price: formData.price || "Contact for Price",
-        type: resolvedType,
-        img: base64Img || "https://images.unsplash.com/photo-1560518883-ce09059eeffa",
-        ownerName: "RSV Estate Pvt Ltd",
-        phone: "+91 9962917779, +91 99627 37779",
-        email: "info@rsvgroups.com",
-        sqft: "As Per Document",
-        status: "pending",
-        amenities: selectedAmenities,
-        id: Date.now(),
+      let resolvedType = "land";
+      if (category) {
+        resolvedType = category;
+      } else if (formData.propertyType === "plot") {
+        resolvedType = "land";
+      } else if (formData.propertyCategory) {
+        resolvedType = formData.propertyCategory;
+      }
+
+      const row = {
+        title:             formData.propertyName    || "Elite Listing",
+        price:             formData.price           || "Contact for Price",
+        property_category: formData.propertyCategory,
+        property_type:     formData.propertyType,
+        apartment_type:    formData.apartmentType   || null,
+        type:              resolvedType,
+        land_area:         formData.landArea        || null,
+        land_area_unit:    formData.landAreaUnit,
+        builtup_area:      formData.builtupArea     || null,
+        builtup_unit:      formData.builtupUnit,
+        plot_size:         formData.plotSize        || null,
+        plot_unit:         formData.plotUnit,
+        location:          formData.location        || "Chennai",
+        property_address:  formData.propertyAddress,
+        additional_info:   formData.additionalInfo  || null,
+        cover_image:       base64Images[0]          || null,
+        images:            base64Images,
+        amenities:         selectedAmenities,
+        owner_name:        formData.ownerName,
+        phone:             formData.phone,
+        email:             formData.email,
+        member_type:       formData.memberType,
+        status:            "pending",
       };
 
-      const existingProperties = JSON.parse(localStorage.getItem("user_properties") || "[]");
-      localStorage.setItem("user_properties", JSON.stringify([newProperty, ...existingProperties]));
-      setShowSuccess(true);
-    };
+      const { error: dbError } = await supabase.from("sell").insert([row]);
+      if (dbError) throw dbError;
 
-    if (formData.image) {
-      const reader = new FileReader();
-      reader.onloadend = () => { processSubmission(reader.result); };
-      reader.readAsDataURL(formData.image);
-    } else {
-      processSubmission(null);
+      setShowSuccess(true);
+    } catch (err) {
+      console.error("Submission error:", err);
+      setError("Something went wrong. Please try again. " + err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -127,10 +182,7 @@ const SellPage = ({ category = "" }) => {
             <div className="success-icon">✓</div>
             <h2>Property Submitted Successfully</h2>
             <p>Your property has been submitted and is currently pending approval.</p>
-            <button
-              className="continue-btn"
-              onClick={() => { setShowSuccess(false); window.location.reload(); }}
-            >
+            <button className="continue-btn" onClick={() => { setShowSuccess(false); window.location.reload(); }}>
               Continue
             </button>
           </div>
@@ -140,19 +192,14 @@ const SellPage = ({ category = "" }) => {
       <section className="benefits-section">
         <div className="benefit-card"><span>💎</span><h4>Premium Buyer Network</h4></div>
         <div className="benefit-card"><span>📈</span><h4>Maximum Property Exposure</h4></div>
-        <div className="benefit-card"><span>⚡</span><h4>Fast & Secure Closing</h4></div>
+        <div className="benefit-card"><span>⚡</span><h4>Fast &amp; Secure Closing</h4></div>
       </section>
 
       <div className="progress-wrapper">
         <div className="progress-labels">
-          <span>Property</span>
-          <span>Amenities</span>
-          <span>Contact</span>
-          <span>Submit</span>
+          <span>Property</span><span>Amenities</span><span>Contact</span><span>Submit</span>
         </div>
-        <div className="progress-bar">
-          <div className="progress-fill"></div>
-        </div>
+        <div className="progress-bar"><div className="progress-fill"></div></div>
       </div>
 
       <div className="form-wrapper">
@@ -166,72 +213,40 @@ const SellPage = ({ category = "" }) => {
           <div className="form-grid">
             <div className="form-group">
               <label>Property Name *</label>
-              <input
-                type="text"
-                name="propertyName"
-                value={formData.propertyName}
-                onChange={handleInputChange}
-                placeholder="Luxury Villa"
-              />
+              <input type="text" name="propertyName" value={formData.propertyName} onChange={handleInputChange} placeholder="Luxury Villa" />
             </div>
             <div className="form-group">
               <label>Expected Price *</label>
-              <input
-                type="text"
-                name="price"
-                value={formData.price}
-                onChange={handleInputChange}
-                placeholder="₹ 1.5 Cr"
-              />
+              <input type="text" name="price" value={formData.price} onChange={handleInputChange} placeholder="₹ 1.5 Cr" />
             </div>
           </div>
 
           <div className="property-category">
             <label className="section-label">Property Category</label>
             <div className="category-grid">
-              <div
-                className={`category-card ${formData.propertyCategory === "residential" ? "active" : ""}`}
-                onClick={() => setFormData({ ...formData, propertyCategory: "residential" })}
-              >
-                <div className="category-icon">🏠</div>
-                <h4>Residential</h4>
-                <p>Apartments, Villas, Houses</p>
-              </div>
-              <div
-                className={`category-card ${formData.propertyCategory === "commercial" ? "active" : ""}`}
-                onClick={() => setFormData({ ...formData, propertyCategory: "commercial" })}
-              >
-                <div className="category-icon">🏢</div>
-                <h4>Commercial</h4>
-                <p>Offices, Shops, Buildings</p>
-              </div>
+              {[
+                { value: "residential", icon: "🏠", title: "Residential", sub: "Apartments, Villas, Houses" },
+                { value: "commercial",  icon: "🏢", title: "Commercial",  sub: "Offices, Shops, Buildings" },
+              ].map((c) => (
+                <div key={c.value} className={`category-card ${formData.propertyCategory === c.value ? "active" : ""}`} onClick={() => setFormData({ ...formData, propertyCategory: c.value })}>
+                  <div className="category-icon">{c.icon}</div><h4>{c.title}</h4><p>{c.sub}</p>
+                </div>
+              ))}
             </div>
           </div>
 
           <div className="form-group">
             <label>Property Type *</label>
             <div className="category-grid">
-              <div
-                className={`category-card ${formData.propertyType === "apartment" ? "active" : ""}`}
-                onClick={() => setFormData({ ...formData, propertyType: "apartment" })}
-              >
-                <div className="category-icon">🏢</div>
-                <h4>Apartment</h4>
-              </div>
-              <div
-                className={`category-card ${formData.propertyType === "villa" ? "active" : ""}`}
-                onClick={() => setFormData({ ...formData, propertyType: "villa" })}
-              >
-                <div className="category-icon">🏠</div>
-                <h4>Villa</h4>
-              </div>
-              <div
-                className={`category-card ${formData.propertyType === "plot" ? "active" : ""}`}
-                onClick={() => setFormData({ ...formData, propertyType: "plot" })}
-              >
-                <div className="category-icon">🌳</div>
-                <h4>Plot / Land</h4>
-              </div>
+              {[
+                { value: "apartment", icon: "🏢", label: "Apartment"  },
+                { value: "villa",     icon: "🏠", label: "Villa"       },
+                { value: "plot",      icon: "🌳", label: "Plot / Land" },
+              ].map((t) => (
+                <div key={t.value} className={`category-card ${formData.propertyType === t.value ? "active" : ""}`} onClick={() => setFormData({ ...formData, propertyType: t.value })}>
+                  <div className="category-icon">{t.icon}</div><h4>{t.label}</h4>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -251,24 +266,22 @@ const SellPage = ({ category = "" }) => {
             <div className="form-grid">
               <div className="form-group">
                 <label>Land Area *</label>
-                <input type="text" name="landArea" value={formData.landArea || ""} onChange={handleInputChange} placeholder="Enter Land Area" />
+                <input type="text" name="landArea" value={formData.landArea} onChange={handleInputChange} placeholder="Enter Land Area" />
               </div>
               <div className="form-group">
                 <label>Unit</label>
-                <select name="landAreaUnit" value={formData.landAreaUnit || "sqft"} onChange={handleInputChange}>
-                  <option value="sqft">Sq.ft</option>
-                  <option value="acre">Acre</option>
+                <select name="landAreaUnit" value={formData.landAreaUnit} onChange={handleInputChange}>
+                  <option value="sqft">Sq.ft</option><option value="acre">Acre</option>
                 </select>
               </div>
               <div className="form-group">
                 <label>Built-up Area *</label>
-                <input type="text" name="builtupArea" value={formData.builtupArea || ""} onChange={handleInputChange} placeholder="Enter Built-up Area" />
+                <input type="text" name="builtupArea" value={formData.builtupArea} onChange={handleInputChange} placeholder="Enter Built-up Area" />
               </div>
               <div className="form-group">
                 <label>Unit</label>
-                <select name="builtupUnit" value={formData.builtupUnit || "sqft"} onChange={handleInputChange}>
-                  <option value="sqft">Sq.ft</option>
-                  <option value="acre">Acre</option>
+                <select name="builtupUnit" value={formData.builtupUnit} onChange={handleInputChange}>
+                  <option value="sqft">Sq.ft</option><option value="acre">Acre</option>
                 </select>
               </div>
             </div>
@@ -278,17 +291,12 @@ const SellPage = ({ category = "" }) => {
             <div className="form-grid">
               <div className="form-group">
                 <label>Land Size *</label>
-                <input
-                  type="text"
-                  value={formData.landSize}
-                  onChange={(e) => setFormData({ ...formData, landSize: e.target.value })}
-                />
+                <input type="text" name="plotSize" value={formData.plotSize} onChange={handleInputChange} placeholder="e.g. 1200" />
               </div>
               <div className="form-group">
                 <label>Unit</label>
                 <select name="plotUnit" value={formData.plotUnit} onChange={handleInputChange}>
-                  <option value="sqft">Sq.ft</option>
-                  <option value="acre">Acre</option>
+                  <option value="sqft">Sq.ft</option><option value="acre">Acre</option>
                 </select>
               </div>
             </div>
@@ -299,40 +307,48 @@ const SellPage = ({ category = "" }) => {
               <label>Location *</label>
               <select name="location" value={formData.location} onChange={handleInputChange}>
                 <option value="">Select Location</option>
-                <option value="omr">Chennai</option>
-                <option value="ecr">Thiruvallur</option>
-                <option value="guindy">Kanchipuram</option>
+                <option value="Chennai">Chennai</option>
+                <option value="Thiruvallur">Thiruvallur</option>
+                <option value="Kanchipuram">Kanchipuram</option>
               </select>
             </div>
           </div>
 
           <div className="form-group full-width">
             <label>Property Description</label>
-            <textarea
-              rows="5"
-              name="additionalInfo"
-              value={formData.additionalInfo}
-              onChange={handleInputChange}
-              placeholder="Describe your property, nearby landmarks, facilities, road access, highlights and other important details..."
-            />
+            <textarea rows="5" name="additionalInfo" value={formData.additionalInfo} onChange={handleInputChange} placeholder="Describe your property, nearby landmarks, facilities, road access, highlights..." />
           </div>
 
           <div className="section-header">
             <h2>Property Images</h2>
-            <p>Upload high quality images to attract buyers faster</p>
+            <p>Upload up to 10 high quality images to attract buyers faster</p>
           </div>
 
           <div className="upload-container">
-            <label htmlFor="property-image" className="upload-box">
+            <label htmlFor="property-images" className="upload-box">
               <div className="upload-icon">📷</div>
-              <h4>Upload Property Image</h4>
-              <p>Drag & Drop or Click to Browse</p>
-              <span>Maximum File Size 5 MB</span>
+              <h4>Upload Property Images</h4>
+              <p>Drag &amp; Drop or Click to Browse</p>
+              <span>Maximum 10 images · 5 MB each</span>
             </label>
-            <input id="property-image" type="file" accept="image/*" onChange={handleImageChange} hidden />
-            {imagePreview && (
-              <div className="preview-container">
-                <img src={imagePreview} alt="Preview" className="image-preview" />
+            <input id="property-images" type="file" accept="image/*" multiple onChange={handleImageChange} hidden />
+
+            {imagePreviews.length > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '12px', marginTop: '1.5rem' }}>
+                {imagePreviews.map((src, idx) => (
+                  <div key={idx} style={{ position: 'relative', borderRadius: '10px', overflow: 'hidden', aspectRatio: '1', border: '2px solid rgba(245,130,32,0.3)' }}>
+                    <img src={src} alt={`preview-${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    {idx === 0 && (
+                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(245,130,32,0.85)', color: '#fff', fontSize: '0.65rem', fontWeight: 700, textAlign: 'center', padding: '3px 0' }}>COVER</div>
+                    )}
+                    <button type="button" onClick={() => removeImage(idx)} style={{ position: 'absolute', top: '5px', right: '5px', width: '22px', height: '22px', borderRadius: '50%', background: 'rgba(0,0,0,0.65)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '0.7rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
+                  </div>
+                ))}
+                {imagePreviews.length < 10 && (
+                  <label htmlFor="property-images" style={{ aspectRatio: '1', border: '2px dashed rgba(245,130,32,0.35)', borderRadius: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(245,130,32,0.7)', fontSize: '1.6rem', gap: '4px' }}>
+                    <span>+</span><span style={{ fontSize: '0.65rem', fontWeight: 600 }}>Add More</span>
+                  </label>
+                )}
               </div>
             )}
           </div>
@@ -352,7 +368,6 @@ const SellPage = ({ category = "" }) => {
             ))}
           </div>
 
-          {/* ── Owner Information — Read Only ── */}
           <div className="section-header">
             <h2>Owner Information</h2>
             <p>Contact details for property verification</p>
@@ -361,61 +376,31 @@ const SellPage = ({ category = "" }) => {
           <div className="form-grid">
             <div className="form-group">
               <label>Owner Name *</label>
-              <input
-                type="text"
-                value="RSV Estate Pvt Ltd"
-                readOnly
-                style={{ background: '#f0f0f0', cursor: 'not-allowed', color: '#555' }}
-              />
+              <input type="text" name="ownerName" value={formData.ownerName} onChange={handleInputChange} placeholder="Enter owner name" required />
             </div>
             <div className="form-group">
               <label>Email *</label>
-              <input
-                type="email"
-                value="info@rsvgroups.com"
-                readOnly
-                style={{ background: '#f0f0f0', cursor: 'not-allowed', color: '#555' }}
-              />
+              <input type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder="Enter email address" required />
             </div>
             <div className="form-group">
               <label>Phone Number *</label>
-              <input
-                type="tel"
-                value="+91 9962917779, +91 99627 37779"
-                readOnly
-                style={{ background: '#f0f0f0', cursor: 'not-allowed', color: '#555' }}
-              />
+              <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} placeholder="+91 XXXXX XXXXX" required />
             </div>
           </div>
 
           <div className="form-group full-width">
             <label>Property Address *</label>
-            <textarea
-              rows="4"
-              name="propertyAddress"
-              value={formData.propertyAddress}
-              onChange={handleInputChange}
-              placeholder="Enter Property Address"
-            />
+            <textarea rows="4" name="propertyAddress" value={formData.propertyAddress} onChange={handleInputChange} placeholder="Enter full property address" required />
           </div>
 
-          <div className="section-header">
-            <h2>Membership</h2>
-          </div>
+          <div className="section-header"><h2>Membership</h2></div>
 
           <div className="membership-cards">
-            <div
-              className={`member-card ${formData.memberType === "new" ? "active" : ""}`}
-              onClick={() => setFormData({ ...formData, memberType: "new" })}
-            >
-              <h4>New Member</h4>
-            </div>
-            <div
-              className={`member-card ${formData.memberType === "existing" ? "active" : ""}`}
-              onClick={() => setFormData({ ...formData, memberType: "existing" })}
-            >
-              <h4>Existing Member</h4>
-            </div>
+            {["new", "existing"].map((type) => (
+              <div key={type} className={`member-card ${formData.memberType === type ? "active" : ""}`} onClick={() => setFormData({ ...formData, memberType: type })}>
+                <h4>{type === "new" ? "New Member" : "Existing Member"}</h4>
+              </div>
+            ))}
           </div>
 
           <div className="trust-section">
@@ -425,16 +410,23 @@ const SellPage = ({ category = "" }) => {
             <div>✓ Dedicated RSV Consultant</div>
           </div>
 
+          {error && (
+            <div style={{ background: '#fff0f0', border: '1px solid #ffcccc', color: '#cc0000', padding: '12px 16px', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.9rem' }}>
+              {error}
+            </div>
+          )}
+
           <div className="action-buttons">
-            <button type="submit" className="submit-btn">Submit Property →</button>
+            <button type="submit" className="submit-btn" disabled={loading}>
+              {loading ? "Submitting..." : "Submit Property →"}
+            </button>
             <button type="button" className="cancel-btn" onClick={() => window.location.reload()}>Cancel</button>
           </div>
 
         </form>
       </div>
-
     </div>
-  );
+  );     
 };
 
 export default SellPage;
