@@ -2327,7 +2327,7 @@ const AdminDashboard = ({ onLogout }) => {
                 </button>
                 <button onClick={() => setEditingProperty(null)} style={{ background: '#d32f2f', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer' }}>Cancel</button>
               </div>
-            </motion.div>
+            </motion.div>    
           </motion.div>
         )}
       </AnimatePresence>
@@ -2337,3 +2337,7 @@ const AdminDashboard = ({ onLogout }) => {
 };
 
 export default AdminDashboard;
+
+
+
+//wwsewswswssw
