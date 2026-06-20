@@ -140,3 +140,4 @@ const TrendingUp = ({ size }) => (
 );
 
 export default AmenitiesPage;
+

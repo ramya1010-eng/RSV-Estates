@@ -986,3 +986,4 @@ const SoldLeasedPage = ({ onNavigate }) => {
 };
 
 export default SoldLeasedPage;
+

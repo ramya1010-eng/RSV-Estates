@@ -157,3 +157,4 @@ const FeaturedProjects = ({ onNavigate }) => {
 };
 
 export default FeaturedProjects;
+

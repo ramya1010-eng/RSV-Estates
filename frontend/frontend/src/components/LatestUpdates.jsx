@@ -59,3 +59,4 @@ const LatestUpdates = () => {
 };
 
 export default LatestUpdates;
+

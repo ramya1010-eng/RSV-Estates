@@ -127,3 +127,4 @@ const Navbar = ({ onNavigate, currentPage }) => {
 };
 
 export default Navbar;
+

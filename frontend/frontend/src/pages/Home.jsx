@@ -19,3 +19,4 @@ const Home = ({ onNavigate, onBuyNavigate }) => {
 };
 
 export default Home;
+

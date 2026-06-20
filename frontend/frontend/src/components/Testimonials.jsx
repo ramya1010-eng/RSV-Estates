@@ -134,3 +134,4 @@ const Testimonials = ({ onNavigate }) => {
 };
 
 export default Testimonials;
+

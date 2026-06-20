@@ -1097,3 +1097,4 @@ const filtered = allProperties.filter(p => {
 };
 
 export default BuyPage;
+

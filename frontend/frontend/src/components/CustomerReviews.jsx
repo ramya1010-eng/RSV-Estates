@@ -283,3 +283,4 @@ const CustomerReviews = ({ onNavigate }) => {
 };
 
 export default CustomerReviews;
+

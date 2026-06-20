@@ -279,3 +279,4 @@ const Hero = ({ onNavigate }) => {
 };
 
 export default Hero;
+

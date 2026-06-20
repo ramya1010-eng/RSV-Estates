@@ -501,3 +501,4 @@ const SellPage = ({ category = "" }) => {
 };
 
 export default SellPage;
+

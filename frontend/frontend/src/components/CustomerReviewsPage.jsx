@@ -398,3 +398,4 @@ const CustomerReviewsPage = ({ onNavigate }) => {
 };
 
 export default CustomerReviewsPage;
+

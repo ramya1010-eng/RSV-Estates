@@ -100,3 +100,4 @@ const Layout = ({ children, onNavigate, currentPage }) => {
 };
 
 export default Layout;
+
