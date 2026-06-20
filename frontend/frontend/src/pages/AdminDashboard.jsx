@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
-import logo from '../images/LOGO.png';
+import logo from '../images/logo2.png';
 
 const PROPERTY_TYPES = ["Land", "Apartment", "Villa", "Plot", "Commercial", "Independent House"];
 const REPRESENTED_OPTIONS = ["Both Buyer & Sellers", "Buyer Only", "Seller Only", "Developer"];
@@ -24,13 +24,12 @@ const AdminDashboard = ({ onLogout }) => {
   const [soldSuccess, setSoldSuccess]       = useState(false);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [editingProperty, setEditingProperty]   = useState(null);
-
   const disabledTabs = ['Dashboard', 'Plots', 'Leads', 'Projects'];
 
+  
+
   // ---------- SOLD ----------
-  const [soldEntries, setSoldEntries] = useState(
-    JSON.parse(localStorage.getItem('sold_entries') || '[]')
-  );
+  const [soldEntries, setSoldEntries] = useState([]);
   const [soldForm, setSoldForm] = useState({
     title: '', location: '', price: '', size: '',
     propertyType: 'Land', represented: 'Both Buyer & Sellers',
@@ -48,6 +47,9 @@ const AdminDashboard = ({ onLogout }) => {
 
   // ---------- SITE INQUIRIES ----------
   const [siteInquiries, setSiteInquiries] = useState([]);
+  const [sellListings, setSellListings] = useState([]);
+  const [viewSellItem, setViewSellItem] = useState(null);
+const [editSellItem, setEditSellItem] = useState(null);
 
   // ---------- SETTINGS ----------
   const [settings, setSettings] = useState({
@@ -82,6 +84,8 @@ const AdminDashboard = ({ onLogout }) => {
 
   useEffect(() => { loadTestimonials(); }, []);
   useEffect(() => { loadSiteInquiries(); }, []);
+  useEffect(() => { loadSellListings(); }, []);
+  useEffect(() => { loadSoldEntries(); }, []);
 
   // ============ LOADERS ============
   const loadTestimonials = async () => {
@@ -98,6 +102,19 @@ const AdminDashboard = ({ onLogout }) => {
     } catch (err) { console.error(err); }
   };
 
+  const loadSellListings = async () => {
+  try {
+    const res = await axios.get('http://localhost:5000/api/sell');
+    setSellListings(res.data);
+  } catch (err) { console.error(err); }
+};
+
+const loadSoldEntries = async () => {
+  try {
+    const res = await axios.get('http://localhost:5000/api/sold-leased');
+    setSoldEntries(res.data);
+  } catch (err) { console.error(err); }
+};
   // ============ APPROVALS ============
   const handleApprove = (id) => {
     const props   = JSON.parse(localStorage.getItem('user_properties') || '[]');
@@ -139,30 +156,45 @@ const AdminDashboard = ({ onLogout }) => {
 
   // ============ SOLD ============
   const handleSoldChange = (e) => setSoldForm({ ...soldForm, [e.target.name]: e.target.value });
-
-  const handleSoldSubmit = (e) => {
-    e.preventDefault();
-    if (!soldForm.title || !soldForm.location) {
-      setSoldFormError('Property Title and Location are required.');
-      return;
-    }
-    setSoldFormError('');
-    const newEntry = { ...soldForm, id: Date.now() };
-    const updated  = [newEntry, ...soldEntries];
-    setSoldEntries(updated);
-    localStorage.setItem('sold_entries', JSON.stringify(updated));
-    setSoldForm({ title: '', location: '', price: '', size: '', propertyType: 'Land', represented: 'Both Buyer & Sellers', customerName: '', status: 'Sold' });
+const handleSoldSubmit = async (e) => {
+  e.preventDefault();
+  if (!soldForm.title || !soldForm.location) {
+    setSoldFormError('Property Title and Location are required.');
+    return;
+  }
+  setSoldFormError('');
+  try {
+  await axios.post('http://localhost:5000/api/sold-leased', {
+  area:        soldForm.title,
+  locality:    soldForm.location,
+  price:       soldForm.price,
+  size:        soldForm.size,
+  type:        soldForm.propertyType,
+  represented: soldForm.represented,
+  status:      soldForm.status,
+  description: soldForm.customerName,
+});
+    await loadSoldEntries();
+    setSoldForm({
+      title: '', location: '', price: '', size: '',
+      propertyType: 'Land', represented: 'Both Buyer & Sellers',
+      customerName: '', status: 'Sold'
+    });
     setShowSoldModal(false);
     setSoldSuccess(true);
     setTimeout(() => setSoldSuccess(false), 3000);
-  };
-
-  const handleSoldDelete = (id) => {
-    const updated = soldEntries.filter(e => e.id !== id);
-    setSoldEntries(updated);
-    localStorage.setItem('sold_entries', JSON.stringify(updated));
-  };
-
+  } catch (err) {
+    console.error(err);
+    setSoldFormError('Failed to save. Try again.');
+  }
+};
+  const handleSoldDelete = async (id) => {
+  if (!window.confirm('Delete this entry?')) return;
+  try {
+    await axios.delete(`http://localhost:5000/api/sold-leased/${id}`);
+    await loadSoldEntries();
+  } catch (err) { console.error(err); }
+};
   // ============ TESTIMONIALS ============
   const handleTestimonialSubmit = async (e) => {
     e.preventDefault();
@@ -227,6 +259,38 @@ const AdminDashboard = ({ onLogout }) => {
       loadSiteInquiries();
     } catch (err) { console.error(err); }
   };
+  const handleDeleteSellListing = async (id) => {
+  if (!window.confirm('Delete this listing?')) return;
+  try {
+    await axios.delete(`http://localhost:5000/api/sell/${id}`);
+    loadSellListings();
+  } catch (err) { console.error(err); }
+};
+
+const handleApproveSellListing = async (id) => {
+  try {
+    await axios.patch(`http://localhost:5000/api/sell/${id}`, { status: 'approved' });
+    loadSellListings();
+  } catch (err) { console.error(err); }
+};
+
+const handleRejectSellListing = async (id) => {
+  try {
+    await axios.patch(`http://localhost:5000/api/sell/${id}`, { status: 'rejected' });
+    loadSellListings();
+  } catch (err) { console.error(err); }
+};
+
+const handleSaveSellEdit = async () => {
+  try {
+    await axios.put(`http://localhost:5000/api/sell/${editSellItem.id}`, editSellItem);
+    loadSellListings();
+    setEditSellItem(null);
+  } catch (err) {
+    console.error(err);
+    alert('Failed to update listing');
+  }
+};
 
   // ============ NAV ============
   const handleTabClick = (tabId) => {
@@ -277,83 +341,32 @@ const AdminDashboard = ({ onLogout }) => {
                   </tr>
                 ) : (
                   soldEntries.map((entry) => (
-                    <motion.tr key={entry.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
-                      <td>
-                        <div style={{ fontWeight: 600 }}>{entry.title}</div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--accent-gold)', marginTop: 3 }}>{entry.propertyType}</div>
-                      </td>
-                      <td>{entry.location}</td>
-                      <td style={{ color: 'var(--accent-gold)', fontWeight: 700 }}>{entry.price || '—'}</td>
-                      <td>{entry.size || '—'}</td>
-                      <td style={{ fontSize: '0.82rem' }}>
-                        RSV Groups Represented <strong style={{ color: 'var(--accent-gold)' }}>{entry.represented}</strong>
-                      </td>
-                      <td>
-                        <span className={`status-badge ${entry.status === 'Sold' ? 'status-booked' : 'status-available'}`}>
-                          {entry.status}
-                        </span>
-                      </td>
-                      <td>
-                        <Trash2 size={18} style={{ cursor: 'pointer', color: '#ff4757', opacity: 0.7 }} onClick={() => handleSoldDelete(entry.id)} />
-                      </td>
-                    </motion.tr>
+                   <motion.tr key={entry.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
+  <td>
+    <div style={{ fontWeight: 600 }}>{entry.area}</div>
+    <div style={{ fontSize: '0.75rem', color: 'var(--accent-gold)', marginTop: 3 }}>{entry.type}</div>
+  </td>
+  <td>{entry.locality}</td>
+  <td style={{ color: 'var(--accent-gold)', fontWeight: 700 }}>{entry.price || '—'}</td>
+  <td>{entry.size || '—'}</td>
+  <td style={{ fontSize: '0.82rem' }}>
+    <strong style={{ color: 'var(--accent-gold)' }}>{entry.represented}</strong>
+  </td>
+  <td>
+    <span className={`status-badge ${entry.status === 'Sold' ? 'status-booked' : 'status-available'}`}>
+      {entry.status}
+    </span>
+  </td>
+  <td>
+    <Trash2 size={18} style={{ cursor: 'pointer', color: '#ff4757', opacity: 0.7 }} onClick={() => handleSoldDelete(entry.id)} />
+  </td>
+</motion.tr>
                   ))
                 )}
               </tbody>
             </table>
           </div>
         );
-
-      // ---- APPROVALS ----
-      case 'Approvals':
-        return (
-          <div className="admin-table-container">
-            <h3 className="serif" style={{ fontSize: '1.5rem', marginBottom: '2rem' }}>Property Approvals</h3>
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Title</th><th>Location</th><th>Type</th>
-                  <th>Owner</th><th>Status</th><th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {properties.length === 0 ? (
-                  <tr><td colSpan="6" style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>No pending properties at the moment.</td></tr>
-                ) : (
-                  properties.map((prop) => (
-                    <tr key={prop.id || prop.title}>
-                      <td style={{ fontWeight: 600 }}>{prop.title}</td>
-                      <td>{prop.location}</td>
-                      <td>{prop.type || prop.propertyType || 'N/A'}</td>
-                      <td>
-                        <div>{prop.ownerName}</div>
-                        <div style={{ fontSize: '0.75rem', opacity: 0.6 }}>{prop.phone}</div>
-                      </td>
-                      <td>
-                        <span style={{
-                          background: prop.status === 'approved' ? '#288849' : prop.status === 'rejected' ? '#d32f2f' : '#ff9800',
-                          color: '#fff', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold'
-                        }}>
-                          {prop.status || 'pending'}
-                        </span>
-                      </td>
-                      <td>
-                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                          <button style={{ background: '#288849', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer' }} onClick={() => handleApprove(prop.id)}>Approve</button>
-                          <button style={{ background: '#d32f2f', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer' }} onClick={() => handleReject(prop.id)}>Reject</button>
-                          <button style={{ background: '#2563eb', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer' }} onClick={() => handleEdit(prop)}>Edit</button>
-                          <button style={{ background: '#f59e0b', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer' }} onClick={() => handleView(prop.id)}>View</button>
-                          <button style={{ background: '#111827', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer' }} onClick={() => handleDelete(prop.id)}>Delete</button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        );
-
       // ---- TESTIMONIALS ----
       case 'Testimonials':
         return (
@@ -421,6 +434,79 @@ const AdminDashboard = ({ onLogout }) => {
             </table>
           </div>
         );
+        case 'Sell Listings':
+  return (
+    <div className="admin-table-container">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+        <h3 className="serif" style={{ fontSize: '1.5rem' }}>Sell Listings</h3>
+        <div style={{ color: 'var(--accent-gold)', fontWeight: 600 }}>{sellListings.length} Listings</div>
+      </div>
+      <table className="admin-table">
+        <thead>
+          <tr>
+            <th>Property</th><th>Category</th><th>Location</th>
+            <th>Price</th><th>Amenities</th><th>Status</th><th>Date</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sellListings.length === 0 ? (
+            <tr>
+              <td colSpan="8" style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🏠</div>
+                No sell listings yet.
+              </td>
+            </tr>
+          ) : (
+            sellListings.map((item) => (
+              <motion.tr key={item.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
+                <td>
+                  <div style={{ fontWeight: 600 }}>{item.property_name}</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--accent-gold)' }}>{item.property_type}</div>
+                </td>
+                <td style={{ textTransform: 'capitalize' }}>{item.category || '—'}</td>
+                <td style={{ textTransform: 'capitalize' }}>{item.location || '—'}</td>
+                <td style={{ color: 'var(--accent-gold)', fontWeight: 700 }}>{item.price || '—'}</td>
+                <td style={{ fontSize: '0.78rem', maxWidth: '150px' }}>{item.amenities || '—'}</td>
+                <td>
+                  <span style={{
+                    background: item.status === 'approved' ? '#288849' : item.status === 'rejected' ? '#d32f2f' : '#ff9800',
+                    color: '#fff', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold'
+                  }}>
+                    {item.status || 'pending'}
+                  </span>
+                </td>
+                <td>{new Date(item.created_at).toLocaleDateString()}</td>
+                <td>
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+  <button
+    style={{ background: '#f59e0b', color: '#fff', border: 'none', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}
+    onClick={() => setViewSellItem(item)}
+  >View</button>
+  <button
+    style={{ background: '#2563eb', color: '#fff', border: 'none', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}
+    onClick={() => setEditSellItem({...item})}
+  >Edit</button>
+  <button
+    style={{ background: '#288849', color: '#fff', border: 'none', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}
+    onClick={() => handleApproveSellListing(item.id)}
+  >Approve</button>
+  <button
+    style={{ background: '#d32f2f', color: '#fff', border: 'none', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}
+    onClick={() => handleRejectSellListing(item.id)}
+  >Reject</button>
+  <button
+    style={{ background: '#111827', color: '#fff', border: 'none', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}
+    onClick={() => handleDeleteSellListing(item.id)}
+  >Delete</button>
+</div>
+                </td>
+              </motion.tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
 
       // ---- SITE INQUIRIES ----
       case 'Site Inquiries':
@@ -524,7 +610,7 @@ const AdminDashboard = ({ onLogout }) => {
             { id: 'Leads',          icon: <Users size={20} /> },
             { id: 'Projects',       icon: <Layers size={20} /> },
             { id: 'Sold',           icon: <BadgeDollarSign size={20} /> },
-            { id: 'Approvals',      icon: <CheckCircle size={20} /> },
+            { id: 'Sell Listings', icon: <ArrowUpRight size={20} /> },
             { id: 'Testimonials',   icon: <Users size={20} /> },
             { id: 'Site Inquiries', icon: <Phone size={20} /> },
             { id: 'Settings',       icon: <Settings size={20} /> },
@@ -790,6 +876,187 @@ const AdminDashboard = ({ onLogout }) => {
               <div style={{ display: 'flex', gap: '15px', marginTop: '20px' }}>
                 <button onClick={handleSaveEdit} style={{ background: '#288849', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer' }}>Save Changes</button>
                 <button onClick={() => setEditingProperty(null)} style={{ background: '#d32f2f', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer' }}>Cancel</button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {/* ===== VIEW SELL LISTING MODAL ===== */}
+      <AnimatePresence>
+        {viewSellItem && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 99999 }}
+            onClick={() => setViewSellItem(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }}
+              onClick={(e) => e.stopPropagation()}
+              style={{ background: '#fff', width: '750px', maxWidth: '95%', borderRadius: '16px', padding: '35px', color: '#111', maxHeight: '90vh', overflowY: 'auto' }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 700 }}>🏠 Property Details</h2>
+                <button onClick={() => setViewSellItem(null)}
+                  style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1.5rem' }}>✕</button>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem' }}>
+                {[
+                  { label: 'Property Name', value: viewSellItem.property_name },
+                  { label: 'Category', value: viewSellItem.category },
+                  { label: 'Property Type', value: viewSellItem.property_type },
+                  { label: 'Location', value: viewSellItem.location },
+                  { label: 'Expected Price', value: viewSellItem.price },
+                  { label: 'Member Type', value: viewSellItem.member_type },
+                  { label: 'Status', value: viewSellItem.status },
+                  { label: 'Submitted On', value: new Date(viewSellItem.created_at).toLocaleDateString() },
+                ].map((field) => (
+                  <div key={field.label} style={{ background: '#f9f9f9', padding: '14px 18px', borderRadius: '10px', border: '1px solid #eee' }}>
+                    <div style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase', marginBottom: '4px' }}>{field.label}</div>
+                    <div style={{ fontWeight: 600, textTransform: 'capitalize' }}>{field.value || '—'}</div>
+                  </div>
+                ))}
+
+                <div style={{ gridColumn: 'span 2', background: '#f9f9f9', padding: '14px 18px', borderRadius: '10px', border: '1px solid #eee' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase', marginBottom: '4px' }}>Amenities</div>
+                  <div style={{ fontWeight: 600 }}>{viewSellItem.amenities || '—'}</div>
+                </div>
+
+                <div style={{ gridColumn: 'span 2', background: '#f9f9f9', padding: '14px 18px', borderRadius: '10px', border: '1px solid #eee' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase', marginBottom: '4px' }}>Property Address</div>
+                  <div style={{ fontWeight: 600 }}>{viewSellItem.property_address || '—'}</div>
+                </div>
+
+                {viewSellItem.image_urls && (
+  <div style={{ gridColumn: 'span 2', background: '#f9f9f9', padding: '14px 18px', borderRadius: '10px', border: '1px solid #eee' }}>
+    <div style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase', marginBottom: '10px' }}>Property Images</div>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+      {viewSellItem.image_urls.split(',').map((url, idx) => (
+        <img
+          key={idx}
+          src={`http://localhost:5000${url.trim()}`}
+          alt={`Property ${idx + 1}`}
+          style={{ width: '150px', height: '110px', objectFit: 'cover', borderRadius: '8px', border: '2px solid #eee' }}
+        />
+      ))}
+    </div>
+  </div>
+)}
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', marginTop: '2rem' }}>
+                <button
+                  style={{ background: '#288849', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer' }}
+                  onClick={() => { handleApproveSellListing(viewSellItem.id); setViewSellItem(null); }}
+                >Approve</button>
+                <button
+                  style={{ background: '#d32f2f', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer' }}
+                  onClick={() => { handleRejectSellListing(viewSellItem.id); setViewSellItem(null); }}
+                >Reject</button>
+                <button
+                  style={{ background: '#2563eb', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer' }}
+                  onClick={() => { setEditSellItem({...viewSellItem}); setViewSellItem(null); }}
+                >Edit</button>
+                <button
+                  style={{ background: '#f0f0f0', color: '#111', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer' }}
+                  onClick={() => setViewSellItem(null)}
+                >Close</button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ===== EDIT SELL LISTING MODAL ===== */}
+      <AnimatePresence>
+        {editSellItem && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 99999 }}
+            onClick={() => setEditSellItem(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }}
+              onClick={(e) => e.stopPropagation()}
+              style={{ background: '#1a1a2e', color: '#fff', width: '750px', maxWidth: '95%', borderRadius: '16px', padding: '35px', maxHeight: '90vh', overflowY: 'auto' }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                <h2 style={{ fontSize: '1.5rem' }}>✏️ Edit Sell Listing</h2>
+                <button onClick={() => setEditSellItem(null)}
+                  style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#fff', fontSize: '1.5rem' }}>✕</button>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem' }}>
+                {[
+                  { label: 'Property Name', key: 'property_name' },
+                  { label: 'Expected Price', key: 'price' },
+                  { label: 'Category', key: 'category' },
+                  { label: 'Property Type', key: 'property_type' },
+                  { label: 'Location', key: 'location' },
+                  { label: 'Member Type', key: 'member_type' },
+                ].map((field) => (
+                  <div key={field.key} className="admin-input-group">
+                    <label>{field.label.toUpperCase()}</label>
+                    <input
+                      type="text"
+                      value={editSellItem[field.key] || ''}
+                      onChange={(e) => setEditSellItem({ ...editSellItem, [field.key]: e.target.value })}
+                    />
+                  </div>
+                ))}
+
+                <div className="admin-input-group" style={{ gridColumn: 'span 2' }}>
+                  <label>AMENITIES</label>
+                  <input
+                    type="text"
+                    value={editSellItem.amenities || ''}
+                    onChange={(e) => setEditSellItem({ ...editSellItem, amenities: e.target.value })}
+                  />
+                </div>
+
+                <div className="admin-input-group" style={{ gridColumn: 'span 2' }}>
+                  <label>PROPERTY ADDRESS</label>
+                  <textarea
+                    rows="3"
+                    style={{ width: '100%', padding: '1rem', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', resize: 'vertical' }}
+                    value={editSellItem.property_address || ''}
+                    onChange={(e) => setEditSellItem({ ...editSellItem, property_address: e.target.value })}
+                  />
+                </div>
+
+                <div className="admin-input-group" style={{ gridColumn: 'span 2' }}>
+                  <label>DESCRIPTION</label>
+                  <textarea
+                    rows="4"
+                    style={{ width: '100%', padding: '1rem', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', resize: 'vertical' }}
+                    value={editSellItem.description || ''}
+                    onChange={(e) => setEditSellItem({ ...editSellItem, description: e.target.value })}
+                  />
+                </div>
+
+                <div className="admin-input-group">
+                  <label>STATUS</label>
+                  <select
+                    value={editSellItem.status || 'pending'}
+                    onChange={(e) => setEditSellItem({ ...editSellItem, status: e.target.value })}
+                    style={{ width: '100%', padding: '0.9rem', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '1.2rem', marginTop: '2rem' }}>
+                <button
+                  style={{ flex: 1, background: '#288849', color: '#fff', border: 'none', padding: '12px', borderRadius: '10px', cursor: 'pointer', fontWeight: 600 }}
+                  onClick={handleSaveSellEdit}
+                >Save Changes</button>
+                <button
+                  style={{ flex: 1, background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', padding: '12px', borderRadius: '10px', cursor: 'pointer' }}
+                  onClick={() => setEditSellItem(null)}
+                >Cancel</button>
               </div>
             </motion.div>
           </motion.div>

@@ -444,12 +444,20 @@ const leadRoutes           = require('./routes/leadRoutes');
 const testimonialRoutes    = require('./routes/testimonials');
 const siteInquiryRoutes    = require('./routes/siteInquiryRoutes');
 const customerReviewRoutes = require('./routes/CustomerReviewRoute');
+const soldLeasedRoutes = require('./routes/soldLeasedRoutes');
+const sellRoutes = require('./routes/sellRoutes');
+const buyRoutes = require('./routes/buyRoutes');
+const soldRoutes = require('./routes/soldRoutes');
 
 app.use('/api/plots',            plotRoutes);
 app.use('/api/leads',            leadRoutes);
 app.use('/api/testimonials',     testimonialRoutes);
 app.use('/api/site-inquiries',   siteInquiryRoutes);
 app.use('/api/customer-reviews', customerReviewRoutes);
+app.use('/api/sell', sellRoutes);
+app.use('/api/buy', buyRoutes);
+app.use('/api/sold', soldRoutes);
+app.use('/api/sold-leased', soldLeasedRoutes); 
 
 // ── Nodemailer Transporter (reusable) ─────────────────────────────────────────
 const createTransporter = () =>

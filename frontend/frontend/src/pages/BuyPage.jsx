@@ -734,9 +734,15 @@ const BuyPage = ({ category = 'all' }) => {
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [userProps, setUserProps] = useState([]);
 
-  useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('user_properties') || '[]');
-    setUserProps(saved);
+ useEffect(() => {
+    // Fetch approved properties from DB
+    fetch('http://localhost:5000/api/buy')
+      .then(res => res.json())
+      .then(data => {
+        console.log('Buy properties from DB:', data);
+        setUserProps(data);
+      })
+      .catch(err => console.error('Buy fetch error:', err));
 
     const searchQuery = localStorage.getItem('home_search_filters');
     if (searchQuery) {
@@ -761,17 +767,23 @@ const BuyPage = ({ category = 'all' }) => {
     return num;
   };
 
-  const allProperties = [...userProps];
+  const allProperties = userProps.map(p => ({
+  ...p,
+  title: p.title || p.property_name,
+  type: p.type || p.category || p.property_type,
+  price: p.price,
+  location: p.location,
+  img: p.img || (p.image_urls ? `http://localhost:5000${p.image_urls.split(',')[0].trim()}` : null),
+}));
 
-  const filtered = allProperties.filter(p => {
-    if (p.status && p.status !== 'approved') return false;
-    if (appliedFilters.propertyType && p.type !== appliedFilters.propertyType) return false;
-    if (appliedFilters.location && !p.location.toLowerCase().includes(appliedFilters.location.toLowerCase())) return false;
-    const pValue = parsePrice(p.price);
-    if (appliedFilters.minPrice && pValue < parseInt(appliedFilters.minPrice)) return false;
-    if (appliedFilters.maxPrice && pValue > parseInt(appliedFilters.maxPrice)) return false;
-    return true;
-  });
+const filtered = allProperties.filter(p => {
+  if (appliedFilters.propertyType && p.type !== appliedFilters.propertyType) return false;
+  if (appliedFilters.location && p.location && !p.location.toLowerCase().includes(appliedFilters.location.toLowerCase())) return false;
+  const pValue = parsePrice(p.price);
+  if (appliedFilters.minPrice && pValue < parseInt(appliedFilters.minPrice)) return false;
+  if (appliedFilters.maxPrice && pValue > parseInt(appliedFilters.maxPrice)) return false;
+  return true;
+});
 
   const getIcon = (type) => {
     if (type === 'residential') return <Home size={16} />;
@@ -1021,11 +1033,29 @@ const BuyPage = ({ category = 'all' }) => {
       {selectedProperty && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '2rem' }}>
           <div style={{ width: '750px', maxWidth: '95%', maxHeight: '88vh', background: '#f8f4e8', borderRadius: '20px', overflowY: 'auto', overflowX: 'hidden', boxShadow: '0 30px 60px rgba(0,0,0,0.4)' }}>
-            <img
-              src={selectedProperty.img || selectedProperty.image_url || heroImages.all}
-              alt={selectedProperty.title}
-              style={{ width: '100%', height: '280px', objectFit: 'cover' }}
-            />
+            {selectedProperty.image_urls ? (
+  <div style={{ display: 'flex', overflowX: 'auto', gap: '0', height: '280px' }}>
+    {selectedProperty.image_urls.split(',').map((url, idx) => (
+      <img
+        key={idx}
+        src={`http://localhost:5000${url.trim()}`}
+        alt={`${selectedProperty.title} ${idx + 1}`}
+        style={{ 
+          minWidth: selectedProperty.image_urls.split(',').length === 1 ? '100%' : '280px',
+          height: '280px', 
+          objectFit: 'cover',
+          flex: selectedProperty.image_urls.split(',').length === 1 ? '1' : 'none'
+        }}
+      />
+    ))}
+  </div>
+) : (
+  <img
+    src={selectedProperty.img || heroImages.all}
+    alt={selectedProperty.title}
+    style={{ width: '100%', height: '280px', objectFit: 'cover' }}
+  />
+)}
             <div style={{ padding: '2rem' }}>
               <h2 className="serif" style={{ color: '#153a21', marginBottom: '1rem', fontSize: '1.6rem' }}>{selectedProperty.title}</h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '0.75rem', marginBottom: '1.5rem' }}>

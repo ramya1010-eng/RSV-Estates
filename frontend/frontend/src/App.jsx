@@ -1,8 +1,3 @@
-
-
-
-
-
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
@@ -23,41 +18,52 @@ import SellPage from './pages/SellPage';
 import SoldLeasedPage from './pages/SoldLeasedPage';
 import CustomerReviewsPage from './components/CustomerReviewsPage';
 
-const API = import.meta.env.VITE_API_URL;
+const getInitialPage = () => {
+  const hash = window.location.hash.replace('#', '').trim();
+  if (hash) return hash;
+  return window.history.state?.page || 'home';
+};
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('home');
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+  const [currentPage, setCurrentPage] = useState(getInitialPage);
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(
+    localStorage.getItem('adminAuth') === 'true'
+  );
 
+  // ── Scroll to top on navigation ──
   useEffect(() => {
-    window.scrollTo(0, 0);
-
-    const handleHash = () => {
-      if (window.location.hash === '#admin') {
-        setCurrentPage('admin');
-      }
-    };
-
-    handleHash();
-    window.addEventListener('hashchange', handleHash);
-    return () => window.removeEventListener('hashchange', handleHash);
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, [currentPage]);
 
-  // ✅ FeaturedProjects onNavigate('land' | 'residential' | 'commercial' | 'all')
-  // Home page-ல FeaturedProjects-க்கு இந்த function pass பண்ணு
-  const handleBuyNavigate = (category) => {
-    if (category === 'all') {
-      setCurrentPage('buy');
-    } else {
-      setCurrentPage(`buy-${category}`); // 'buy-land', 'buy-residential', 'buy-commercial'
-    }
+  // ── Handle browser back/forward ──
+  useEffect(() => {
+    const initialPage = getInitialPage();
+    window.history.replaceState({ page: initialPage }, '', `#${initialPage}`);
+
+    const onPop = (e) => {
+      const page = e.state?.page || 'home';
+      setCurrentPage(page);
+    };
+
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+
+  // ── Navigation ──
+  const handleNavigate = (page) => {
+    if (page === currentPage) return;
+    window.history.pushState({ page }, '', `#${page}`);
+    setCurrentPage(page);
   };
 
+  const handleBuyNavigate = (category) => {
+    handleNavigate(category === 'all' ? 'buy' : `buy-${category}`);
+  };
+
+  // ── Page renderer ──
   const renderPage = () => {
-    // buy-land / buy-residential / buy-commercial / buy
     if (currentPage.startsWith('buy')) {
-      const parts = currentPage.split('-');
-      const category = parts[1] || 'all'; // 'land', 'residential', 'commercial', 'all'
+      const category = currentPage.split('-')[1] || 'all';
       return <BuyPage category={category} />;
     }
 
@@ -68,8 +74,7 @@ function App() {
 
     switch (currentPage) {
       case 'home':
-        // ✅ Home-க்கு handleBuyNavigate pass பண்றோம்
-        return <Home onNavigate={setCurrentPage} onBuyNavigate={handleBuyNavigate} />;
+        return <Home onNavigate={handleNavigate} onBuyNavigate={handleBuyNavigate} />;
       case 'plots':
         return <PlotsPage />;
       case 'locations':
@@ -81,40 +86,44 @@ function App() {
       case 'testimonials':
         return <TestimonialsPage />;
       case 'reviews':
-        return <CustomerReviewsPage onNavigate={setCurrentPage} />;
+        return <CustomerReviewsPage onNavigate={handleNavigate} />;
       case 'about':
-        return <AboutPage onNavigate={setCurrentPage} />;
+        return <AboutPage onNavigate={handleNavigate} />;
       case 'contact':
         return <ContactPage />;
       case 'book-visit':
         return <BookVisitPage />;
       case 'sold-leased':
-        return <SoldLeasedPage onNavigate={setCurrentPage} />;
+        return <SoldLeasedPage onNavigate={handleNavigate} />;
       case 'admin':
         if (!isAdminAuthenticated) {
           return (
             <AdminLogin
-              onLogin={() => setIsAdminAuthenticated(true)}
-              onBack={() => setCurrentPage('home')}
+              onLogin={() => {
+                localStorage.setItem('adminAuth', 'true');
+                setIsAdminAuthenticated(true);
+              }}
+              onBack={() => handleNavigate('home')}
             />
           );
         }
         return (
           <AdminDashboard
             onLogout={() => {
+              localStorage.removeItem('adminAuth');
               setIsAdminAuthenticated(false);
-              setCurrentPage('home');
+              handleNavigate('admin');
             }}
           />
         );
       default:
-        return <Home onNavigate={setCurrentPage} onBuyNavigate={handleBuyNavigate} />;
+        return <Home onNavigate={handleNavigate} onBuyNavigate={handleBuyNavigate} />;
     }
   };
 
   return (
     <div className="app">
-      <Layout currentPage={currentPage} onNavigate={setCurrentPage}>
+      <Layout currentPage={currentPage} onNavigate={handleNavigate}>
         {renderPage()}
       </Layout>
     </div>

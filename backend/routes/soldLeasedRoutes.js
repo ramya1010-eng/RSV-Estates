@@ -3,7 +3,6 @@ const router = express.Router();
 const { Pool } = require("pg");
 require("dotenv").config({ path: require("path").resolve(__dirname, "../.env") });
 
-// Direct pool - no db.js dependency
 const pool = new Pool({
   host: process.env.DB_HOST || "localhost",
   user: process.env.DB_USER || "postgres",
@@ -12,12 +11,10 @@ const pool = new Pool({
   port: parseInt(process.env.DB_PORT) || 5432,
 });
 
-// GET all sold/leased deals (newest first)
+// GET all
 router.get("/", async (req, res) => {
   try {
-    const result = await pool.query(
-      "SELECT * FROM sold ORDER BY created_at DESC"
-    );
+    const result = await pool.query("SELECT * FROM sold_leased ORDER BY created_at DESC");
     res.json(result.rows);
   } catch (err) {
     console.error("GET /sold-leased error:", err);
@@ -25,40 +22,30 @@ router.get("/", async (req, res) => {
   }
 });
 
-// POST - add new deal
-router.post("/", async (req, res) => {
-  const {
-    property_title,
-    location,
-    price,
-    size,
-    property_type,
-    represented,
-    status,
-    customer_name,
-  } = req.body;
 
-  if (!property_title || !location) {
-    return res
-      .status(400)
-      .json({ error: "property_title and location are required" });
+// POST - add new
+router.post("/", async (req, res) => {
+  const { area, locality, price, size, type, represented, status, description } = req.body;
+
+  if (!area || !locality) {
+    return res.status(400).json({ error: "area and locality are required" });
   }
 
   try {
     const result = await pool.query(
-      `INSERT INTO sold
-        (property_title, location, price, size, property_type, represented, status, customer_name)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      `INSERT INTO sold_leased (area, locality, price, size, type, represented, status, description, category)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING *`,
       [
-        property_title,
-        location,
+        area,
+        locality,
         price || null,
         size || null,
-        property_type || "Land",
+        type || "Land",
         represented || "Both Buyer & Sellers",
-        status || "Sold Out",
-        customer_name || null,
+        status || "Sold",
+        description || null,
+        "residential",
       ]
     );
     res.status(201).json(result.rows[0]);
@@ -68,48 +55,27 @@ router.post("/", async (req, res) => {
   }
 });
 
-// PUT - update existing deal
+// PUT - update
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const {
-    property_title,
-    location,
-    price,
-    size,
-    property_type,
-    represented,
-    status,
-    customer_name,
-  } = req.body;
+  const { area, locality, price, size, type, represented, status, description } = req.body;
 
   try {
     const result = await pool.query(
-      `UPDATE sold SET
-        property_title = $1,
-        location       = $2,
-        price          = $3,
-        size           = $4,
-        property_type  = $5,
-        represented    = $6,
-        status         = $7,
-        customer_name  = $8
+      `UPDATE sold_leased SET
+        area        = $1,
+        locality    = $2,
+        price       = $3,
+        size        = $4,
+        type        = $5,
+        represented = $6,
+        status      = $7,
+        description = $8
        WHERE id = $9
        RETURNING *`,
-      [
-        property_title,
-        location,
-        price || null,
-        size || null,
-        property_type,
-        represented,
-        status,
-        customer_name || null,
-        id,
-      ]
+      [area, locality, price || null, size || null, type, represented, status, description || null, id]
     );
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Deal not found" });
-    }
+    if (result.rows.length === 0) return res.status(404).json({ error: "Deal not found" });
     res.json(result.rows[0]);
   } catch (err) {
     console.error("PUT /sold-leased/:id error:", err);
@@ -117,22 +83,17 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// DELETE - remove a deal
+// DELETE
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await pool.query(
-      "DELETE FROM sold WHERE id = $1 RETURNING id",
-      [id]
-    );
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Deal not found" });
-    }
+    const result = await pool.query("DELETE FROM sold_leased WHERE id = $1 RETURNING id", [id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: "Deal not found" });
     res.json({ success: true, deleted_id: id });
   } catch (err) {
     console.error("DELETE /sold-leased/:id error:", err);
     res.status(500).json({ error: "Server error" });
   }
-});     
+});
 
 module.exports = router;

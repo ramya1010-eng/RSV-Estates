@@ -789,7 +789,7 @@ const ContactPage = () => {
                 </h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   {[
-                    { title: 'Valasaravakkam Head Office', addr: '12, RSV Tower, Industrial Estate, Valasaravakkam, Chennai 600087' },
+                    { title: 'Valasaravakkam Head Office', addr: 'No. 7, Kamakodi Nagar, Valasaravakkam, Chennai 600087' },
                   ].map((o, i) => (
                     <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
                       <div style={{ background: 'var(--primary-bg)', padding: '0.8rem', borderRadius: '50%', color: 'var(--accent-gold)', flexShrink: 0 }}>
@@ -807,11 +807,11 @@ const ContactPage = () => {
               <div className="offices-img" style={{ position: 'relative' }}>
                 <img
                   src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1200"
-                  alt="RSV Groups Building"
+                  alt="RSV Estate Building"
                   style={{ width: '100%', borderRadius: '15px', boxShadow: '0 20px 40px rgba(0,0,0,0.1)', display: 'block' }}
                 />
                 <div style={{ position: 'absolute', bottom: '-15px', left: '-15px', background: 'var(--primary-dark)', color: 'var(--accent-gold)', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 15px 30px rgba(0,0,0,0.2)' }}>
-                  <h3 className="serif" style={{ fontSize: 'var(--font-md)', marginBottom: '3px' }}>RSV Groups</h3>
+                  <h3 className="serif" style={{ fontSize: 'var(--font-md)', marginBottom: '3px' }}>RSV ESTATES</h3>
                   <p style={{ color: 'white', fontSize: '0.75rem', marginBottom: 0 }}>Corporate Headquarters</p>
                 </div>
               </div>

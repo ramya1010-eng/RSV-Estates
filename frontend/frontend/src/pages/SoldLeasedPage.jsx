@@ -543,11 +543,12 @@ const PropertyDetailModal = ({ item, onClose }) => {
   }, []);
 
   const specs = [
-    { label: 'Type',        value: item.propertyType },
-    { label: 'Size',        value: item.size },
-    item.price        ? { label: 'Sold At',     value: item.price,        gold: true } : null,
-    item.represented  ? { label: 'Represented', value: item.represented }              : null,
-    item.customerName ? { label: 'Client',      value: item.customerName }             : null,
+    { label: 'Type', value: item.type || item.propertyType },
+{ label: 'Size',       value: item.size },
+{ label: 'Location',   value: item.locality },
+item.price       ? { label: 'Sold At',     value: item.price,       gold: true } : null,
+item.represented ? { label: 'Represented', value: item.represented             } : null,
+item.description ? { label: 'Client',      value: item.description             } : null,
   ].filter(Boolean);
 
   return (
@@ -690,15 +691,15 @@ const PropertyCard = ({ item, idx, onClick }) => (
           <CheckCircle2 size={11} /> {(item.status || 'SOLD').toUpperCase()}
         </span>
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: '#f4f1eb', color: '#6b7280', padding: '4px 8px', borderRadius: '6px', fontSize: '0.64rem', fontFamily: 'sans-serif', fontWeight: 600 }}>
-          {typeIcon(item.propertyType)} {item.propertyType || 'Property'}
+         {typeIcon(item.type || item.propertyType)} {item.type || item.propertyType || 'Property'}
         </span>
       </div>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', marginBottom: '1rem' }}>
         <MapPin size={14} style={{ color: '#c9a84c', marginTop: '4px', flexShrink: 0 }} />
         <div>
-          <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0f1a11', lineHeight: 1.25 }}>{item.title}</div>
-          {item.location && (
-            <div style={{ fontSize: '0.78rem', color: '#6b7280', fontFamily: 'sans-serif', marginTop: '3px' }}>{item.location}</div>
+          <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0f1a11', lineHeight: 1.25 }}>{item.area}</div>
+          {item.locality && (
+            <div style={{ fontSize: '0.78rem', color: '#6b7280', fontFamily: 'sans-serif', marginTop: '3px' }}>{item.locality}</div>
           )}
         </div>
       </div>
@@ -735,11 +736,17 @@ const SoldLeasedPage = ({ onNavigate }) => {
 
   useEffect(() => {
     setLoading(true);
-    const rows = getEntries();
-    setData(rows);
-    setLoading(false);
+    fetch('http://localhost:5000/api/sold-leased')
+      .then(res => res.json())
+      .then(data => {
+        setData(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
   }, []);
-
   useEffect(() => {
     const h = e => { if (e.key === 'Escape') setSelected(null); };
     window.addEventListener('keydown', h);
@@ -754,11 +761,11 @@ const SoldLeasedPage = ({ onNavigate }) => {
   const filtered = data.filter(d => {
     const ms = statusFilter === 'All' || d.status === statusFilter;
     const mq = !search ||
-      (d.title    || '').toLowerCase().includes(search.toLowerCase()) ||
-      (d.location || '').toLowerCase().includes(search.toLowerCase());
+      (d.area     || '').toLowerCase().includes(search.toLowerCase()) ||
+      (d.locality || '').toLowerCase().includes(search.toLowerCase()) ||
+      (d.type     || '').toLowerCase().includes(search.toLowerCase());
     return ms && mq;
   });
-
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated  = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
