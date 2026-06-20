@@ -736,7 +736,7 @@ const BuyPage = ({ category = 'all' }) => {
 
  useEffect(() => {
     // Fetch approved properties from DB
-    fetch('http://localhost:5000/api/buy')
+    fetch('https://celebrated-flexibility-production-1c57.up.railway.app/api/buy')
       .then(res => res.json())
       .then(data => {
         console.log('Buy properties from DB:', data);
@@ -773,7 +773,7 @@ const BuyPage = ({ category = 'all' }) => {
   type: p.type || p.category || p.property_type,
   price: p.price,
   location: p.location,
-  img: p.img || (p.image_urls ? `http://localhost:5000${p.image_urls.split(',')[0].trim()}` : null),
+  img: p.img || (p.image_urls ? `https://celebrated-flexibility-production-1c57.up.railway.app${p.image_urls.split(',')[0].trim()}` : null),
 }));
 
 const filtered = allProperties.filter(p => {
@@ -1038,7 +1038,7 @@ const filtered = allProperties.filter(p => {
     {selectedProperty.image_urls.split(',').map((url, idx) => (
       <img
         key={idx}
-        src={`http://localhost:5000${url.trim()}`}
+        src={`https://celebrated-flexibility-production-1c57.up.railway.app${url.trim()}`}
         alt={`${selectedProperty.title} ${idx + 1}`}
         style={{ 
           minWidth: selectedProperty.image_urls.split(',').length === 1 ? '100%' : '280px',

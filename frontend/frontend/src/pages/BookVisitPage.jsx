@@ -8,7 +8,7 @@
 // import { motion } from 'framer-motion';
 // import { MapPin, Phone, User, Calendar, ShieldCheck, CheckCircle2, Navigation, FileCheck, Loader, AlertCircle } from 'lucide-react';
 
-// const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+// const API_URL = import.meta.env.VITE_API_URL || 'https://celebrated-flexibility-production-1c57.up.railway.app';
 
 // const BookVisitPage = () => {
 //   const [form, setForm] = useState({
@@ -299,7 +299,7 @@ import {
   Loader, AlertCircle,
 } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'https://celebrated-flexibility-production-1c57.up.railway.app';
 
 /* ── Inline SVG Icons ─────────────────────────────────────────────────────── */
 const MapIcon = ({ size }) => (

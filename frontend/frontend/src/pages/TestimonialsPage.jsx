@@ -15,7 +15,7 @@
 //   const fetchTestimonials = async () => {
 //     try {
 //       const res = await axios.get(
-//         'http://localhost:5000/api/testimonials'
+//         'https://celebrated-flexibility-production-1c57.up.railway.app/api/testimonials'
 //       );
 
 //       setReviews(res.data);
@@ -109,7 +109,7 @@
 //                   <img
 //                     src={
 //                       r.image_url
-//                         ? `http://localhost:5000${r.image_url}`
+//                         ? `https://celebrated-flexibility-production-1c57.up.railway.app${r.image_url}`
 //                         : '/default-user.jpg'
 //                     }
 //                     alt={r.name}
@@ -159,7 +159,7 @@ const Testimonials = ({ onNavigate }) => {
 
   const fetchTestimonials = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/testimonials');
+      const res = await axios.get('https://celebrated-flexibility-production-1c57.up.railway.app/api/testimonials');
       setReviews(res.data);
     } catch (error) {
       console.error('Error loading testimonials:', error);
@@ -200,7 +200,7 @@ const Testimonials = ({ onNavigate }) => {
               <div className="user-profile">
                 <div className="profile-img">
                   <img
-                    src={r.image_url ? `http://localhost:5000${r.image_url}` : '/default-user.jpg'}
+                    src={r.image_url ? `https://celebrated-flexibility-production-1c57.up.railway.app${r.image_url}` : '/default-user.jpg'}
                     alt={r.name}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />

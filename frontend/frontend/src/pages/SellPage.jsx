@@ -99,7 +99,7 @@ const SellPage = ({ category = "" }) => {
         formData.images.forEach(img => fd.append('images', img));
       }
 
-      const response = await fetch('http://localhost:5000/api/sell', {
+      const response = await fetch('https://celebrated-flexibility-production-1c57.up.railway.app/api/sell', {
         method: 'POST',
         body: fd,
       });

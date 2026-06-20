@@ -36,7 +36,7 @@ const CustomerReviews = ({ onNavigate }) => {
 
   const fetchReviews = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/customer-reviews');
+      const res = await axios.get('https://celebrated-flexibility-production-1c57.up.railway.app/api/customer-reviews');
       setReviews(res.data);
     } catch (err) {
       console.error('Error loading reviews:', err);
@@ -49,7 +49,7 @@ const CustomerReviews = ({ onNavigate }) => {
     setIsSubmitting(true);
     setSubmitMsg('');
     try {
-      const res = await axios.post('http://localhost:5000/api/customer-reviews', formData);
+      const res = await axios.post('https://celebrated-flexibility-production-1c57.up.railway.app/api/customer-reviews', formData);
       if (res.data.success) {
         setFormData({ name: '', role: '', review: '', rating: 0 });
         setShowForm(false);
@@ -121,7 +121,7 @@ const CustomerReviews = ({ onNavigate }) => {
                   >
                     {r.image_url ? (
                       <img
-                        src={`http://localhost:5000${r.image_url}`}
+                        src={`https://celebrated-flexibility-production-1c57.up.railway.app${r.image_url}`}
                         alt={r.name}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />

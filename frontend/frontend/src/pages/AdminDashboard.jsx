@@ -90,28 +90,28 @@ const [editSellItem, setEditSellItem] = useState(null);
   // ============ LOADERS ============
   const loadTestimonials = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/testimonials');
+      const res = await axios.get('https://celebrated-flexibility-production-1c57.up.railway.app/api/testimonials');
       setTestimonials(res.data);
     } catch (err) { console.error(err); }
   };
 
   const loadSiteInquiries = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/site-inquiries');
+      const res = await axios.get('https://celebrated-flexibility-production-1c57.up.railway.app/api/site-inquiries');
       setSiteInquiries(res.data);
     } catch (err) { console.error(err); }
   };
 
   const loadSellListings = async () => {
   try {
-    const res = await axios.get('http://localhost:5000/api/sell');
+    const res = await axios.get('https://celebrated-flexibility-production-1c57.up.railway.app/api/sell');
     setSellListings(res.data);
   } catch (err) { console.error(err); }
 };
 
 const loadSoldEntries = async () => {
   try {
-    const res = await axios.get('http://localhost:5000/api/sold-leased');
+    const res = await axios.get('https://celebrated-flexibility-production-1c57.up.railway.app/api/sold-leased');
     setSoldEntries(res.data);
   } catch (err) { console.error(err); }
 };
@@ -164,7 +164,7 @@ const handleSoldSubmit = async (e) => {
   }
   setSoldFormError('');
   try {
-  await axios.post('http://localhost:5000/api/sold-leased', {
+  await axios.post('https://celebrated-flexibility-production-1c57.up.railway.app/api/sold-leased', {
   area:        soldForm.title,
   locality:    soldForm.location,
   price:       soldForm.price,
@@ -191,7 +191,7 @@ const handleSoldSubmit = async (e) => {
   const handleSoldDelete = async (id) => {
   if (!window.confirm('Delete this entry?')) return;
   try {
-    await axios.delete(`http://localhost:5000/api/sold-leased/${id}`);
+    await axios.delete(`https://celebrated-flexibility-production-1c57.up.railway.app/api/sold-leased/${id}`);
     await loadSoldEntries();
   } catch (err) { console.error(err); }
 };
@@ -207,12 +207,12 @@ const handleSoldSubmit = async (e) => {
 
       if (editingTestimonial) {
         await axios.put(
-          `http://localhost:5000/api/testimonials/${editingTestimonial.id}`,
+          `https://celebrated-flexibility-production-1c57.up.railway.app/api/testimonials/${editingTestimonial.id}`,
           formData, { headers: { 'Content-Type': 'multipart/form-data' } }
         );
       } else {
         await axios.post(
-          'http://localhost:5000/api/testimonials',
+          'https://celebrated-flexibility-production-1c57.up.railway.app/api/testimonials',
           formData, { headers: { 'Content-Type': 'multipart/form-data' } }
         );
       }
@@ -229,7 +229,7 @@ const handleSoldSubmit = async (e) => {
   const handleDeleteTestimonial = async (id) => {
     if (!window.confirm('Delete this testimonial?')) return;
     try {
-      await axios.delete(`http://localhost:5000/api/testimonials/${id}`);
+      await axios.delete(`https://celebrated-flexibility-production-1c57.up.railway.app/api/testimonials/${id}`);
       await loadTestimonials();
     } catch (err) { console.error(err); }
   };
@@ -255,35 +255,35 @@ const handleSoldSubmit = async (e) => {
   // ============ SITE INQUIRIES ============
   const handleDeleteInquiry = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/site-inquiries/${id}`);
+      await axios.delete(`https://celebrated-flexibility-production-1c57.up.railway.app/api/site-inquiries/${id}`);
       loadSiteInquiries();
     } catch (err) { console.error(err); }
   };
   const handleDeleteSellListing = async (id) => {
   if (!window.confirm('Delete this listing?')) return;
   try {
-    await axios.delete(`http://localhost:5000/api/sell/${id}`);
+    await axios.delete(`https://celebrated-flexibility-production-1c57.up.railway.app/api/sell/${id}`);
     loadSellListings();
   } catch (err) { console.error(err); }
 };
 
 const handleApproveSellListing = async (id) => {
   try {
-    await axios.patch(`http://localhost:5000/api/sell/${id}`, { status: 'approved' });
+    await axios.patch(`https://celebrated-flexibility-production-1c57.up.railway.app/api/sell/${id}`, { status: 'approved' });
     loadSellListings();
   } catch (err) { console.error(err); }
 };
 
 const handleRejectSellListing = async (id) => {
   try {
-    await axios.patch(`http://localhost:5000/api/sell/${id}`, { status: 'rejected' });
+    await axios.patch(`https://celebrated-flexibility-production-1c57.up.railway.app/api/sell/${id}`, { status: 'rejected' });
     loadSellListings();
   } catch (err) { console.error(err); }
 };
 
 const handleSaveSellEdit = async () => {
   try {
-    await axios.put(`http://localhost:5000/api/sell/${editSellItem.id}`, editSellItem);
+    await axios.put(`https://celebrated-flexibility-production-1c57.up.railway.app/api/sell/${editSellItem.id}`, editSellItem);
     loadSellListings();
     setEditSellItem(null);
   } catch (err) {
@@ -401,7 +401,7 @@ const handleSaveSellEdit = async () => {
                     <motion.tr key={item.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
                       <td>
                         <img
-                          src={item.image_url ? `http://localhost:5000${item.image_url}` : '/default-user.jpg'}
+                          src={item.image_url ? `https://celebrated-flexibility-production-1c57.up.railway.app${item.image_url}` : '/default-user.jpg'}
                           alt={item.name}
                           style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--accent-gold)' }}
                         />
@@ -798,7 +798,7 @@ const handleSaveSellEdit = async () => {
                     />
                   )}
                   {editingTestimonial && !testimonialForm.image && editingTestimonial.image_url && (
-                    <img src={`http://localhost:5000${editingTestimonial.image_url}`} alt="Current"
+                    <img src={`https://celebrated-flexibility-production-1c57.up.railway.app${editingTestimonial.image_url}`} alt="Current"
                       style={{ width: '70px', height: '70px', borderRadius: '50%', objectFit: 'cover', marginTop: '10px', border: '2px solid var(--accent-gold)', opacity: 0.7 }}
                     />
                   )}
@@ -934,7 +934,7 @@ const handleSaveSellEdit = async () => {
       {viewSellItem.image_urls.split(',').map((url, idx) => (
         <img
           key={idx}
-          src={`http://localhost:5000${url.trim()}`}
+          src={`https://celebrated-flexibility-production-1c57.up.railway.app${url.trim()}`}
           alt={`Property ${idx + 1}`}
           style={{ width: '150px', height: '110px', objectFit: 'cover', borderRadius: '8px', border: '2px solid #eee' }}
         />

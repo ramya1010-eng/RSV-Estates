@@ -736,7 +736,7 @@ const SoldLeasedPage = ({ onNavigate }) => {
 
   useEffect(() => {
     setLoading(true);
-    fetch('http://localhost:5000/api/sold-leased')
+    fetch('https://celebrated-flexibility-production-1c57.up.railway.app/api/sold-leased')
       .then(res => res.json())
       .then(data => {
         setData(data);

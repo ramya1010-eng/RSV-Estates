@@ -8,7 +8,7 @@
 // import { motion } from 'framer-motion';
 // import { Phone, Mail, MapPin, ShieldCheck, Send, CheckCircle, AlertCircle, Loader } from 'lucide-react';
 
-// const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+// const API_URL = import.meta.env.VITE_API_URL || 'https://celebrated-flexibility-production-1c57.up.railway.app';
 
 // const ContactPage = () => {
 //   const [form, setForm] = useState({
@@ -368,7 +368,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, ShieldCheck, Send, CheckCircle, AlertCircle, Loader } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'https://celebrated-flexibility-production-1c57.up.railway.app';
 
 const ContactPage = () => {
   const [form, setForm] = useState({

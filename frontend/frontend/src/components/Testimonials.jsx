@@ -13,7 +13,7 @@ const Testimonials = ({ onNavigate }) => {
   const fetchTestimonials = async () => {
     try {
       const res = await axios.get(
-        'http://localhost:5000/api/testimonials'
+        'https://celebrated-flexibility-production-1c57.up.railway.app/api/testimonials'
       );
 
       setReviews(res.data);
@@ -83,7 +83,7 @@ const Testimonials = ({ onNavigate }) => {
                   <img
                     src={
                       r.image_url
-                        ? `http://localhost:5000${r.image_url}`
+                        ? `https://celebrated-flexibility-production-1c57.up.railway.app${r.image_url}`
                         : '/default-user.jpg'
                     }
                     alt={r.name}

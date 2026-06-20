@@ -24,7 +24,7 @@ const Hero = ({ onNavigate }) => {
 
   try {
     const response = await fetch(
-      "http://localhost:5000/api/site-inquiries",
+      "https://celebrated-flexibility-production-1c57.up.railway.app/api/site-inquiries",
       {
         method: "POST",
         headers: {
