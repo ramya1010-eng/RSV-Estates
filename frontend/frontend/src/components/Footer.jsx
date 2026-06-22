@@ -288,7 +288,7 @@ const Footer = ({ onNavigate }) => {
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '3rem',
+            gap: '1.5rem',
             padding: '0',
             alignItems: 'start'
           }}
@@ -309,34 +309,34 @@ const Footer = ({ onNavigate }) => {
 
             <p
               style={{
-                color: 'rgba(255,255,255,0.5)',
+                color: '#ffffff',
                 fontSize: '0.95rem',
                 lineHeight: '1.6',
-                marginBottom: '1.5rem',
+                marginBottom: '0.8rem',
                 maxWidth: '280px'
               }}
             >
-              Visit us at our office <br />
-              No. 7, Kamakodi Nagar, Valasaravakkam,
-              <br />Chennai - 600087
+             <span style={{ color: '#C9A84C', fontWeight: '600' }}>Visit us at our office</span> <br />
+  No. 7, Kamakodi Nagar, Valasaravakkam,
+  <br />Chennai - 600087
 
               <br /><br /> Contact Us <br />
               <a
                 href="tel:+919962917779"
-                style={{ color: 'rgba(255,255,255,0.5)', textDecoration: 'none' }}
+                style={{ color: '#ffffff', textDecoration: 'none' }}
               >
                 +91 9962917779
               </a>
               {', '}
               <a
                 href="tel:+919962737779"
-                style={{ color: 'rgba(255,255,255,0.5)', textDecoration: 'none' }}
+                style={{ color: '#ffffff', textDecoration: 'none' }}
               >
                 +91 99627 37779
               </a>
 
               <br /><br />
-              E-mail : rsventerprises8344@gmail.com
+              E-mail : info@rsvgroups.com
             </p>
 
             <div style={{ display: 'flex', gap: '1rem' }}>
@@ -360,10 +360,11 @@ const Footer = ({ onNavigate }) => {
             <h4
               style={{
                 fontSize: '1.1rem',
-                marginBottom: '1.5rem',
+                marginBottom: '0.8rem',
                 fontWeight: '500',
                 letterSpacing: '1px',
-                marginTop: 0
+                marginTop: 0,
+                color: '#C9A84C'
               }}
             >
               Quick Links
@@ -377,7 +378,7 @@ const Footer = ({ onNavigate }) => {
                     style={{
                       background: 'none',
                       border: 'none',
-                      color: 'rgba(255,255,255,0.5)',
+                      color: '#ffffff',
                       cursor: 'pointer',
                       padding: 0,
                       fontSize: '1.2rem',
@@ -398,10 +399,11 @@ const Footer = ({ onNavigate }) => {
             <h4
               style={{
                 fontSize: '1.1rem',
-                marginBottom: '1.5rem',
+                marginBottom: '0.8rem',
                 fontWeight: '500',
                 letterSpacing: '1px',
-                marginTop: 0
+                marginTop: 0,
+                color: '#C9A84C'
               }}
             >
               Company
@@ -411,7 +413,7 @@ const Footer = ({ onNavigate }) => {
               <li style={{ marginBottom: '0.75rem' }}>
                 <button
                   onClick={() => onNavigate('about')}
-                  style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', padding: 0, fontSize: '1.2rem' }}
+                  style={{ background: 'none', border: 'none', color: '#ffffff', cursor: 'pointer', padding: 0, fontSize: '1.2rem' }}
                 >
                   About Us
                 </button>
@@ -419,7 +421,7 @@ const Footer = ({ onNavigate }) => {
               <li style={{ marginBottom: '0.75rem' }}>
                 <button
                   onClick={() => onNavigate('sold-leased')}
-                  style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', padding: 0, fontSize: '1.2rem' }}
+                  style={{ background: 'none', border: 'none', color: '#ffffff', cursor: 'pointer', padding: 0, fontSize: '1.2rem' }}
                 >
                   Sold & Leased
                 </button>
@@ -427,7 +429,7 @@ const Footer = ({ onNavigate }) => {
               <li style={{ marginBottom: '0.75rem' }}>
                 <button
                   onClick={() => onNavigate('contact')}
-                  style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', padding: 0, fontSize: '1.2rem' }}
+                  style={{ background: 'none', border: 'none', color: '#ffffff', cursor: 'pointer', padding: 0, fontSize: '1.2rem' }}
                 >
                   Contact Us
                 </button>
@@ -435,7 +437,7 @@ const Footer = ({ onNavigate }) => {
               <li style={{ marginBottom: '0.75rem' }}>
                 <button
                   onClick={() => onNavigate('book-visit')}
-                  style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', padding: 0, fontSize: '1.2rem' }}
+                  style={{ background: 'none', border: 'none', color: '#ffffff', cursor: 'pointer', padding: 0, fontSize: '1.2rem' }}
                 >
                   Book Visit
                 </button>
@@ -455,12 +457,11 @@ const Footer = ({ onNavigate }) => {
             justifyContent: 'space-between',
             flexWrap: 'wrap',
             gap: '1rem',
-            opacity: 0.5,
             fontSize: '1.2rem',
             letterSpacing: '0.5px'
           }}
         >
-          <div style={{ textAlign: 'center', width: '100%' }}>
+          <div style={{ textAlign: 'center', width: '100%',color: '#C9A84C', }}>
             <p>
               © 2026{' '}
               <a

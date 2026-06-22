@@ -149,6 +149,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { Quote } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const Testimonials = ({ onNavigate }) => {
   const [reviews, setReviews] = useState([]);
@@ -169,7 +170,12 @@ const Testimonials = ({ onNavigate }) => {
   return (
     <section className="testimonials" id="testimonials">
       <div className="container">
-
+<SEO
+  title="Testimonials"
+  description="Read what our clients say about RSV Estates. Real reviews from happy home buyers and investors in Chennai."
+  keywords="RSV Estates reviews, customer testimonials, property buyer reviews Chennai"
+  url="/#testimonials"
+/>
         <motion.div
           className="section-head"
           initial={{ opacity: 0, y: 30 }}

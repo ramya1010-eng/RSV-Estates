@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, TrendingUp, Car, Plane, Building2, ShieldCheck, ArrowRight, Info } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const LocationsPage = () => {
   const locations = [
@@ -32,6 +33,13 @@ const LocationsPage = () => {
 
   return (
     <div className="locations-page-detailed">
+      <SEO
+  title="Locations"
+  description="Discover prime property locations across Chennai offered by RSV Estates – Valasaravakkam and surrounding areas."
+  keywords="property locations Chennai, Valasaravakkam real estate, Chennai locality properties"
+  url="/#locations"
+/>
+
       {/* Hero Section */}
       <section className="locations-hero" style={{ 
         height: '60vh', 

@@ -710,6 +710,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Home, Building, TreePine, Search, Ruler } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const BuyPage = ({ category = 'all' }) => {
   const [filterState, setFilterState] = useState({
@@ -807,6 +808,14 @@ const filtered = allProperties.filter(p => {
 
   return (
     <div className="page-container" style={{ background: 'var(--primary-bg)' }}>
+       {/* ── SEO ── */}
+    <SEO
+      title="Buy Property"
+      description="Browse residential plots, commercial spaces and land for sale in Chennai. Find your perfect property with RSV Estates."
+      keywords="buy property Chennai, plots for sale Chennai, residential property Chennai, commercial property"
+      url="/#buy"
+    />
+
 
       {/* ── Hero ── */}
       <section className="buy-hero" style={{

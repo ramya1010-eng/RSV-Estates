@@ -367,6 +367,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, ShieldCheck, Send, CheckCircle, AlertCircle, Loader } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://celebrated-flexibility-production-1c57.up.railway.app';
 
@@ -422,6 +423,13 @@ const ContactPage = () => {
 
   return (
     <>
+    <SEO
+  title="Contact Us"
+  description="Contact RSV Estates at No. 7, Kamakodi Nagar, Valasaravakkam, Chennai. Call +91 9962917779."
+  keywords="contact RSV Estates, real estate office Chennai, property inquiry Chennai"
+  url="/#contact"
+/>
+
       <style>{`
         /* ── Reset ── */
         *, *::before, *::after { box-sizing: border-box; }

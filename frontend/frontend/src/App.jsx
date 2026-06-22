@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import { HelmetProvider } from 'react-helmet-async';
 
 import Layout from './components/Layout';
 import Home from './pages/Home';
@@ -30,12 +31,10 @@ function App() {
     localStorage.getItem('adminAuth') === 'true'
   );
 
-  // ── Scroll to top on navigation ──
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [currentPage]);
 
-  // ── Handle browser back/forward ──
   useEffect(() => {
     const initialPage = getInitialPage();
     window.history.replaceState({ page: initialPage }, '', `#${initialPage}`);
@@ -49,7 +48,6 @@ function App() {
     return () => window.removeEventListener('popstate', onPop);
   }, []);
 
-  // ── Navigation ──
   const handleNavigate = (page) => {
     if (page === currentPage) return;
     window.history.pushState({ page }, '', `#${page}`);
@@ -60,7 +58,6 @@ function App() {
     handleNavigate(category === 'all' ? 'buy' : `buy-${category}`);
   };
 
-  // ── Page renderer ──
   const renderPage = () => {
     if (currentPage.startsWith('buy')) {
       const category = currentPage.split('-')[1] || 'all';
@@ -73,28 +70,17 @@ function App() {
     }
 
     switch (currentPage) {
-      case 'home':
-        return <Home onNavigate={handleNavigate} onBuyNavigate={handleBuyNavigate} />;
-      case 'plots':
-        return <PlotsPage />;
-      case 'locations':
-        return <LocationsPage />;
-      case 'projects':
-        return <ProjectsPage />;
-      case 'amenities':
-        return <AmenitiesPage />;
-      case 'testimonials':
-        return <TestimonialsPage />;
-      case 'reviews':
-        return <CustomerReviewsPage onNavigate={handleNavigate} />;
-      case 'about':
-        return <AboutPage onNavigate={handleNavigate} />;
-      case 'contact':
-        return <ContactPage />;
-      case 'book-visit':
-        return <BookVisitPage />;
-      case 'sold-leased':
-        return <SoldLeasedPage onNavigate={handleNavigate} />;
+      case 'home':        return <Home onNavigate={handleNavigate} onBuyNavigate={handleBuyNavigate} />;
+      case 'plots':       return <PlotsPage />;
+      case 'locations':   return <LocationsPage />;
+      case 'projects':    return <ProjectsPage />;
+      case 'amenities':   return <AmenitiesPage />;
+      case 'testimonials':return <TestimonialsPage />;
+      case 'reviews':     return <CustomerReviewsPage onNavigate={handleNavigate} />;
+      case 'about':       return <AboutPage onNavigate={handleNavigate} />;
+      case 'contact':     return <ContactPage />;
+      case 'book-visit':  return <BookVisitPage />;
+      case 'sold-leased': return <SoldLeasedPage onNavigate={handleNavigate} />;
       case 'admin':
         if (!isAdminAuthenticated) {
           return (
@@ -122,13 +108,14 @@ function App() {
   };
 
   return (
-    <div className="app">
-      <Layout currentPage={currentPage} onNavigate={handleNavigate}>
-        {renderPage()}
-      </Layout>
-    </div>
+    <HelmetProvider>
+      <div className="app">
+        <Layout currentPage={currentPage} onNavigate={handleNavigate}>
+          {renderPage()}
+        </Layout>
+      </div>
+    </HelmetProvider>
   );
 }
 
 export default App;
-

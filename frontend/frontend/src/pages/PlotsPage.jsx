@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search, MapPin, Ruler, IndianRupee, ShieldCheck, Map, ArrowRight, Filter, CheckCircle2 } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const PlotsPage = () => {
   const [activeFilter, setActiveFilter] = useState('All');
@@ -50,6 +51,12 @@ const PlotsPage = () => {
 
   return (
     <div className="plots-page-detailed">
+      <SEO
+  title="Plots"
+  description="Browse available plots for sale in Chennai. RSV Estates offers verified land and plot listings across prime locations."
+  keywords="plots for sale Chennai, land for sale Chennai, buy plot Chennai"
+  url="/#plots"
+/>
       {/* Hero Section */}
       <section
   className="plots-hero"

@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Building, Clock, ArrowRight, Download, ShieldCheck, LayoutGrid } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const ProjectsPage = () => {
   const projects = [
@@ -29,6 +30,12 @@ const ProjectsPage = () => {
 
   return (
     <div className="projects-page-detailed">
+      <SEO
+  title="Projects"
+  description="Explore ongoing and completed real estate projects by RSV Estates in Chennai."
+  keywords="real estate projects Chennai, RSV Estates projects, new property Chennai"
+  url="/#projects"
+/>
       {/* Hero Section */}
       <section className="projects-hero" style={{ 
         height: '70vh', 

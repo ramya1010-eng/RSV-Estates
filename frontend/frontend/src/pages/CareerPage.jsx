@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Briefcase, ArrowRight, Star, Users, MapPin, Target, Shield, TrendingUp, Award } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const CareerPage = () => {
   const stats = [
@@ -19,6 +20,12 @@ const CareerPage = () => {
 
   return (
     <div className="career-page-detailed">
+      <SEO
+  title="Careers"
+  description="Join the RSV Estates team. Explore career opportunities in real estate sales, marketing and operations in Chennai."
+  keywords="real estate jobs Chennai, RSV Estates careers, property agent jobs Chennai"
+  url="/#careers"
+/>
       {/* Hero Section - Matched to AboutPage style */}
       <section className="career-hero" style={{ 
         height: '60vh', 

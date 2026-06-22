@@ -293,6 +293,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import SEO from '../components/SEO';
 import {
   MapPin, Phone, User, Calendar,
   CheckCircle2, Navigation, FileCheck,
@@ -456,6 +457,12 @@ const BookVisitPage = () => {
   return (
     <div>
       <ResponsiveStyles />
+      <SEO
+  title="Book a Visit"
+  description="Schedule a property visit with RSV Estates in Chennai. Our team will guide you through the best available properties."
+  keywords="book property visit Chennai, schedule site visit, RSV Estates appointment"
+  url="/#book-visit"
+/>
 
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <section style={{

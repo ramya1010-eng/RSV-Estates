@@ -49,17 +49,12 @@ const Navbar = ({ onNavigate, currentPage }) => {
     setDropdownOpen(null);
   };
 
-  const isLightPage = ['sell'].some(page => currentPage.startsWith(page));
-
+ const isLightPage = ['sell', 'testimonials'].some(page => currentPage.startsWith(page));
   return (
     <nav className={`navbar ${isScrolled || isLightPage ? 'scrolled' : ''} ${isOpen ? 'menu-open' : ''}`}>
       <div className="container nav-content">
         <div className="logo-section" onClick={() => handleNavClick('home')} style={{ cursor: 'pointer' }}>
-          <img src={logoImg} alt="RSV ESTATES logo" className="navbar-logo" />
-          <div className="brand-text">
-            <span className="brand-main">RSV</span>
-            <span className="brand-sub">ESTATES</span>
-          </div>
+         <img src={logoImg} alt="RSV ESTATES logo" className="navbar-logo" style={{ width: '90px', height: 'auto' }} />
         </div>
 
         <ul className={`nav-links ${isOpen ? 'active' : ''}`}>

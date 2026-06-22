@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import "./SellPage.css";
+import SEO from '../components/SEO';
 
 const SellPage = ({ category = "" }) => {
   const [formData, setFormData] = useState({
@@ -118,7 +119,12 @@ const SellPage = ({ category = "" }) => {
 
   return (
     <div className="sell-page">
-
+<SEO
+  title="Sell"
+  description="View recently sold and leased properties by RSV Estates in Chennai. Proof of our trusted track record."
+  keywords="sold properties Chennai, leased properties Chennai, RSV Estates deals"
+  url="/#sell"
+/>
       {showSuccess && (
         <div className="success-overlay">
           <div className="success-modal">

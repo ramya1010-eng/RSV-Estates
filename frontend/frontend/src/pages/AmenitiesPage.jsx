@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Sun, Shield, TreePine, Droplets, Waves, Zap, Leaf } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const AmenitiesPage = () => {
   const amenities = [
@@ -14,6 +15,12 @@ const AmenitiesPage = () => {
 
   return (
     <div className="amenities-page-detailed">
+      <SEO
+  title="Amenities"
+  description="Explore top-class amenities offered at RSV Estates properties in Chennai – parks, security, utilities and more."
+  keywords="property amenities Chennai, RSV Estates features, gated community Chennai"
+  url="/#amenities"
+/>
       {/* Hero Section */}
       <section className="amenities-hero" style={{ 
         height: '70vh', 

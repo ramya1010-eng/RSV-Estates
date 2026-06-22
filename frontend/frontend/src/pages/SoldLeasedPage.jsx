@@ -513,6 +513,7 @@ import {
   CheckCircle2, ChevronLeft, ChevronRight,
   MapPin, Home, Building2, Layers, Search, X
 } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const STATUS_FILTERS = ['All', 'Sold', 'Leased'];
 const ITEMS_PER_PAGE = 12;
@@ -553,6 +554,7 @@ item.description ? { label: 'Client',      value: item.description             }
 
   return (
     <>
+    
       {/* Backdrop */}
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -780,6 +782,13 @@ const SoldLeasedPage = ({ onNavigate }) => {
 
   return (
     <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", background: '#f9f7f4', minHeight: '100vh' }}>
+      <SEO
+      title="Sold and Leased"
+      description="View recently sold and leased properties by RSV Estates in Chennai. Proof of our trusted track record."
+      keywords="sold properties Chennai, leased properties Chennai, RSV Estates deals"
+      url="/#sold-leased"
+    />
+
 
       {/* ── Hero ── */}
       <section style={{

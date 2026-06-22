@@ -162,6 +162,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ShieldCheck, Award, HeartPulse, Target, Eye } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const AboutPage = ({ onNavigate }) => {
   const stats = [
@@ -173,6 +174,12 @@ const AboutPage = ({ onNavigate }) => {
 
   return (
     <>
+    <SEO
+  title="About Us"
+  description="Learn about RSV Estates – our mission, values, and years of experience in Chennai's real estate market."
+  keywords="about RSV Estates, Chennai real estate company, trusted property agents"
+  url="/#about"
+/>
       <style>{`
         *, *::before, *::after { box-sizing: border-box; }
 
