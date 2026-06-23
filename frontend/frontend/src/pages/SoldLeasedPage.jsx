@@ -822,25 +822,7 @@ const SoldLeasedPage = ({ onNavigate }) => {
             </p>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 0.8 }}
-            style={{
-              display: 'flex', gap: 'clamp(1.5rem,4vw,3rem)',
-              justifyContent: 'center', marginTop: '3rem', flexWrap: 'wrap',
-            }}
-          >
-            {[
-              { num: loading ? '…' : `${data.length}+`, label: 'Units Sold' },
-              { num: '120+',    label: 'Leased Spaces' },
-              { num: '₹250Cr+', label: 'Transaction Value' },
-              { num: '100%',    label: 'Legal Clarity' },
-            ].map((s, i) => (
-              <div key={i} style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 'clamp(1.4rem,3vw,1.8rem)', fontWeight: 700, color: '#c9a84c' }}>{s.num}</div>
-                <div style={{ fontSize: '0.68rem', fontFamily: 'sans-serif', letterSpacing: '2px', color: 'rgba(255,255,255,.5)', textTransform: 'uppercase' }}>{s.label}</div>
-              </div>
-            ))}
-          </motion.div>
+          
         </div>
       </section>
 
