@@ -1850,19 +1850,10 @@ img {
     padding: 1.25rem;
   }
 }
-
 @media (max-width: 768px) {
   .navbar-logo {
     width: 55px !important;
     height: 55px !important;
     object-fit: contain;
-  }
-  
-  .nav-content {
-    padding: 0.3rem 1rem !important;
-  }
-  
-  .navbar {
-    padding: 0.3rem 0 !important;
   }
 }
