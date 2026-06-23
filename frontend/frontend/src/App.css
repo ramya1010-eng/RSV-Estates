@@ -1851,6 +1851,15 @@ img {
   }
 }
 
-
+@media (max-width: 768px) {
+  .navbar-logo {
+    width: 60px !important;
+    height: auto !important;
+  }
+  
+  .logo-section {
+    z-index: 1000;
+  }
+}
 
 
