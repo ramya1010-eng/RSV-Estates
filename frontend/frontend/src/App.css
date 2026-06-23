@@ -1853,13 +1853,16 @@ img {
 
 @media (max-width: 768px) {
   .navbar-logo {
-    width: 60px !important;
-    height: auto !important;
+    width: 55px !important;
+    height: 55px !important;
+    object-fit: contain;
   }
   
-  .logo-section {
-    z-index: 1000;
+  .nav-content {
+    padding: 0.3rem 1rem !important;
+  }
+  
+  .navbar {
+    padding: 0.3rem 0 !important;
   }
 }
-
-
