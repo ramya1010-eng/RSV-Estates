@@ -1852,8 +1852,21 @@ img {
 }
 @media (max-width: 768px) {
   .navbar-logo {
-    width: 55px !important;
-    height: 55px !important;
-    object-fit: contain;
+    width: 90px !important;
+  }
+
+  /* Reduce hero heading size on mobile */
+  .hero-title {
+    font-size: 0.8rem !important;
+    line-height: 0.8 !important;
+  }
+}
+@media (max-width: 768px) {
+  :root {
+    --font-hero: 2.4rem !important;
+  }
+
+  .badge-premium {
+    margin-top: 5rem !important;
   }
 }

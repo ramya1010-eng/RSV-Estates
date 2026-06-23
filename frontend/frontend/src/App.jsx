@@ -24,12 +24,18 @@ const getInitialPage = () => {
   if (hash) return hash;
   return window.history.state?.page || 'home';
 };
-
 function App() {
   const [currentPage, setCurrentPage] = useState(getInitialPage);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(
     localStorage.getItem('adminAuth') === 'true'
   );
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setShowScrollTop(window.scrollY > 400);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -113,7 +119,33 @@ function App() {
         <Layout currentPage={currentPage} onNavigate={handleNavigate}>
           {renderPage()}
         </Layout>
-      </div>
+        {showScrollTop && (
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            style={{
+              position: 'fixed',
+              bottom: '170px',
+              right: '40px',
+              width: '45px',
+              height: '45px',
+              borderRadius: '50%',
+              background: '#c9a84c',
+              color: '#0f1a11',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '1.2rem',
+              fontWeight: 700,
+              zIndex: 9999,
+              boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            ↑
+          </button>
+        )}
+      </div>   {/* ← this closes <div className="app"> */}
     </HelmetProvider>
   );
 }
