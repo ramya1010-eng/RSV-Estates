@@ -121,11 +121,11 @@ const Hero = ({ onNavigate }) => {
           initial="hidden"
           animate="visible"
         >
-          <motion.div 
-            className="badge-premium" 
-            variants={itemVariants} 
-            style={{ marginTop: '8rem', marginBottom: '1rem' }}
-          >
+         <motion.div 
+  className="badge-premium" 
+  variants={itemVariants} 
+  style={{ marginTop: '8rem', marginBottom: '1rem' }}
+>
             SIGNATURE COLLECTION
           </motion.div>
 
